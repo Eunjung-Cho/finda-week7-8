@@ -1,0 +1,102 @@
+site_name: FinDA_7,8week
+site_description: 금융 데이터 분석 부트캠프 심화반 2기 — 7주차 SQL 활용 고객 행동 데이터 추출, 8주차 금융 데이터 클렌징 및 가공
+site_url: https://eunjung-cho.github.io/finda-week7-8/
+repo_url: https://github.com/Eunjung-Cho/finda-week7-8
+repo_name: Eunjung-Cho/finda-week7-8
+edit_uri: edit/main/docs/
+
+# false 로 두면 URL이 /week7/day1-lecture.html 형태가 됩니다.
+# true 로 바꾸면 /week7/day1-lecture/ 형태가 됩니다.
+use_directory_urls: false
+
+theme:
+  name: material
+  language: ko
+  features:
+    - navigation.sections      # 좌측 목차를 주차별 섹션으로 펼침
+    - navigation.top           # 맨 위로 버튼
+    - navigation.footer        # 하단 이전/다음 링크
+    - navigation.tracking
+    - toc.follow               # 우측 목차가 스크롤을 따라감
+    - search.highlight
+    - search.suggest
+    - content.code.copy        # 코드 복사 버튼
+    - content.action.edit      # GitHub에서 바로 편집
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-night
+        name: 다크 모드로 전환
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-sunny
+        name: 라이트 모드로 전환
+  icon:
+    repo: fontawesome/brands/github
+
+markdown_extensions:
+  - abbr
+  - admonition               # !!! note / !!! warning 박스
+  - attr_list
+  - md_in_html
+  - footnotes
+  - tables
+  - pymdownx.details         # ??? 접기
+  - pymdownx.caret
+  - pymdownx.mark
+  - pymdownx.tilde
+  - pymdownx.keys
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - toc:
+      permalink: true          # 헤딩 옆 앵커 링크 생성
+      permalink_title: 이 위치로 링크
+      toc_depth: 3
+      # 기본 slugify는 한글을 통째로 버려서 #_1, #_2 같은 앵커가 됩니다.
+      # 아래 설정이 한글을 앵커에 그대로 보존합니다.
+      slugify: !!python/object/apply:pymdownx.slugs.slugify {kwds: {case: lower}}
+
+plugins:
+  - search:
+      separator: '[\s\-\.\_,:;!?()\[\]]+'
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/Eunjung-Cho
+
+copyright: Copyright &copy; 2026 Eunjung Cho
+
+nav:
+  - 소개: index.md
+  - 7주차 · SQL 활용 고객 행동 데이터 추출:
+      - Day 1 강의안 · 데이터셋 이해와 스키마 분석: week7/day1-lecture.md
+      - Day 1 실습 가이드 · BigQuery 데이터 적재: week7/day1-bigquery-load.md
+      - Day 2 사전 워크시트 · JOIN 복습: week7/day2-worksheet.md
+      - Day 2 강의안 · JOIN과 집계 분석: week7/day2-lecture.md
+      - Day 3 강의안 · 윈도우 함수와 미니 프로젝트: week7/day3-lecture.md
+  - 8주차 · 금융 데이터 클렌징 및 가공:
+      - Day 1 사전 워크시트 · 수정계수 LN/EXP: week8/day1-worksheet.md
+      - Day 1 강의안 · 주식 데이터와 수정주가: week8/day1-lecture.md
+      - Day 2 강의안 · FDS 의심 거래 SQL 패턴: week8/day2-lecture.md
+      - Day 3 강의안 · BigQuery 대용량 처리: week8/day3-lecture.md
