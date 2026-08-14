@@ -16,30 +16,28 @@ IMG_DIR = DOCS / "assets" / "images"
 ATTACH = VAULT / "attachments"
 
 # (원본 파일, 대상 상대 경로)
+# v0.2 개편: 사이트는 7주차 3개 문서만 배포. 8주차는 별도 개편 예정이라 제외.
 FILES = [
-    ("7주차 수업/FinDA_7주차_1일차_데이터셋이해_스키마분석_v0.1.md", "week7/day1-lecture.md"),
-    ("7주차 수업/FinDA_7주차_1일차_BigQuery_데이터적재_가이드_v0.1.md", "week7/day1-bigquery-load.md"),
-    ("7주차 수업/FinDA_7주차_2일차_JOIN_집계분석_v0.1.md", "week7/day2-join-aggregation.md"),
-    ("7주차 수업/FinDA_7주차_2일차_사전배포_JOIN복습_워크시트_v0.1.md", "week7/day2-join-worksheet.md"),
-    ("7주차 수업/FinDA_7주차_3일차_윈도우함수_미니프로젝트_v0.1.md", "week7/day3-window-functions.md"),
-    ("8주차 수업/FinDA_8주차_1일차_주식데이터_수정주가_v0.1.md", "week8/day1-adjusted-price.md"),
-    ("8주차 수업/FinDA_8주차_1일차_사전배포_수정계수_워크시트_v0.1.md", "week8/day1-worksheet.md"),
-    ("8주차 수업/FinDA_8주차_2일차_FDS_의심거래_SQL패턴_v0.1.md", "week8/day2-fds-sql.md"),
-    ("8주차 수업/FinDA_8주차_3일차_BigQuery_대용량처리_v0.1.md", "week8/day3-bigquery.md"),
+    ("7주차 수업/FinDA_7주차_1일차_BigQuery입문_적재_기초쿼리_v0.2.md", "week7/day1-lecture.md"),
+    ("7주차 수업/FinDA_7주차_2일차_금융데이터분석_직무_데이터소개_v0.2.md", "week7/day2-lecture.md"),
+    ("7주차 수업/FinDA_7주차_3일차_데이터마트_설계_구축_v0.2.md", "week7/day3-lecture.md"),
 ]
 
 # 위키링크 대상 -> (대상 md 파일명, 기본 라벨)  ※ 같은 폴더(week7) 기준 상대 경로
 WIKILINK_MAP = {
-    "FinDA_7주차_1일차_BigQuery_데이터적재_가이드_v0.1": ("day1-bigquery-load.md", "BigQuery 데이터 적재 가이드"),
-    "FinDA_7주차_1일차_데이터셋이해_스키마분석_v0.1": ("day1-lecture.md", "1일차 강의안"),
-    "FinDA_7주차_2일차_JOIN_집계분석_v0.1": ("day2-join-aggregation.md", "2일차 강의안"),
-    "FinDA_7주차_2일차_사전배포_JOIN복습_워크시트_v0.1": ("day2-join-worksheet.md", "JOIN 복습 워크시트"),
-    "FinDA_7주차_3일차_윈도우함수_미니프로젝트_v0.1": ("day3-window-functions.md", "3일차 강의안"),
-    "FinDA_8주차_1일차_주식데이터_수정주가_v0.1": ("day1-adjusted-price.md", "1일차 강의안"),
-    "FinDA_8주차_1일차_사전배포_수정계수_워크시트_v0.1": ("day1-worksheet.md", "수정계수 워크시트"),
-    "FinDA_8주차_2일차_FDS_의심거래_SQL패턴_v0.1": ("day2-fds-sql.md", "2일차 강의안"),
-    "FinDA_8주차_3일차_BigQuery_대용량처리_v0.1": ("day3-bigquery.md", "3일차 강의안"),
+    "FinDA_7주차_1일차_BigQuery입문_적재_기초쿼리_v0.2": ("day1-lecture.md", "Day 1 강의안"),
+    "FinDA_7주차_2일차_금융데이터분석_직무_데이터소개_v0.2": ("day2-lecture.md", "Day 2 강의안"),
+    "FinDA_7주차_3일차_데이터마트_설계_구축_v0.2": ("day3-lecture.md", "Day 3 강의안"),
 }
+
+# 변환 전에 이전 산출물 정리 (assets와 index.md는 유지)
+# OneDrive와 파일 감시 프로세스가 디렉터리를 잠글 수 있어 파일 단위로 삭제
+for stale in ["week7", "week8"]:
+    for base in (DOCS / stale, SITE / "instructor-notes" / stale):
+        if base.exists():
+            for f in base.rglob("*"):
+                if f.is_file():
+                    f.unlink()
 
 IMG_RE = re.compile(r"!\[\[([^\]|]+?)(?:\|[^\]]*)?\]\]")
 WIKI_RE = re.compile(r"(?<!\!)\[\[([^\]|]+?)(?:\|([^\]]*))?\]\]")

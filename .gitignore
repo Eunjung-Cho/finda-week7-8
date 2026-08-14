@@ -1,3 +1,8 @@
 site/
 __pycache__/
 .cache/
+*.pyc
+.DS_Store
+
+# 강사용 풀이와 메모 — GitHub에 올리지 않음 (로컬과 Obsidian 원본에만 보관)
+instructor-notes/

@@ -1,5 +1,5 @@
 site_name: FinDA_7,8week
-site_description: 금융 데이터 분석 부트캠프 심화반 2기 — 7주차 SQL 활용 고객 행동 데이터 추출, 8주차 금융 데이터 클렌징 및 가공
+site_description: 금융 데이터 분석 부트캠프 심화반 2기 — 7주차 BigQuery 입문, 금융 데이터 분석, 데이터 마트
 site_author: Eunjung Cho
 site_url: https://eunjung-cho.github.io/finda-week7-8/
 repo_url: https://github.com/Eunjung-Cho/finda-week7-8
@@ -91,14 +91,7 @@ copyright: Copyright &copy; 2026 Eunjung Cho
 
 nav:
   - 소개: index.md
-  - 7주차. SQL을 활용한 고객 행동 데이터 추출:
-      - Day 1 강의안 — 데이터셋 이해와 스키마 분석: week7/day1-lecture.md
-      - Day 1 실습 — BigQuery 데이터 적재 가이드: week7/day1-bigquery-load.md
-      - Day 2 사전 워크시트 — JOIN 복습: week7/day2-join-worksheet.md
-      - Day 2 강의안 — JOIN과 집계 분석: week7/day2-join-aggregation.md
-      - Day 3 강의안 — 윈도우 함수와 미니 프로젝트: week7/day3-window-functions.md
-  - 8주차. 금융 데이터 클렌징과 가공:
-      - Day 1 사전 워크시트 — 수정계수 계산: week8/day1-worksheet.md
-      - Day 1 강의안 — 주식 데이터와 수정주가: week8/day1-adjusted-price.md
-      - Day 2 강의안 — FDS 의심거래 SQL 패턴: week8/day2-fds-sql.md
-      - Day 3 강의안 — BigQuery 대용량 처리: week8/day3-bigquery.md
+  - 7주차. BigQuery와 금융 데이터 분석:
+      - Day 1 — BigQuery 입문, 데이터 적재, 기초 쿼리: week7/day1-lecture.md
+      - Day 2 — 금융 데이터 분석 직무와 실습 데이터: week7/day2-lecture.md
+      - Day 3 — 데이터 마트 설계와 구축: week7/day3-lecture.md

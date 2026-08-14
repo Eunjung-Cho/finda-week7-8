@@ -1,6 +1,7 @@
 # FinDA_7,8week 강의자료 사이트
 
-금융 데이터 분석 부트캠프 심화반 2기 7-8주차 강의자료를 MkDocs Material로 배포합니다.
+금융 데이터 분석 부트캠프 심화반 2기 7주차 강의자료를 MkDocs Material로 배포합니다.
+(8주차는 별도 개편 후 추가 예정)
 
 **공개 주소**: https://eunjung-cho.github.io/finda-week7-8/
 
@@ -10,48 +11,42 @@
 
 ```
 .
-├─ docs/                    # 사이트에 배포되는 강의자료 (여기만 편집하면 됩니다)
+├─ docs/                    # 사이트에 배포되는 강의자료
 │  ├─ index.md              # 첫 화면
-│  ├─ week7/                # 7주차 5개 문서
-│  ├─ week8/                # 8주차 4개 문서
-│  └─ assets/images/        # 이미지 (여기에 넣으세요)
-├─ instructor-notes/        # 강사 메모 — 사이트에 배포되지 않음
-├─ tools/convert.py         # Obsidian .md -> docs/ 변환 스크립트 (재변환용)
+│  ├─ week7/                # 7주차 Day 1-3 강의안 (원본에서 자동 생성됨)
+│  └─ assets/images/        # 이미지
+├─ tools/convert.py         # Obsidian 원본 -> docs/ 변환 스크립트
 ├─ mkdocs.yml               # 사이트 설정 (제목, 목차, 테마)
 ├─ requirements.txt
 └─ .github/workflows/deploy.yml   # push 시 자동 빌드 및 배포
+
+(instructor-notes/는 강사용 풀이 모음으로 로컬에만 존재하며 GitHub에 올라가지 않습니다)
 ```
 
 ## 자료를 수정하려면
 
-**방법 A. GitHub 웹에서 직접** (가장 간단)
-`docs/` 안의 .md 파일을 열고 연필 아이콘 클릭 → 수정 → Commit changes. 2분 뒤 사이트에 반영됩니다.
+**항상 Obsidian 원본을 고칩니다** (`FinDA/7주차 수업`의 v0.2 파일들).
+`docs/`를 직접 고치면 다음 재변환 때 덮어써져 수정이 사라집니다.
 
-**방법 B. 로컬에서 미리보기하며**
+원본을 고친 뒤:
 
 ```bash
-pip install -r requirements.txt
-mkdocs serve          # http://127.0.0.1:8000 에서 실시간 확인
+python tools/convert.py   # 원본 -> docs/ 재변환, 강사용 풀이 분리
+mkdocs serve              # (선택) http://127.0.0.1:8000 에서 미리보기
 git add . && git commit -m "자료 수정" && git push
 ```
 
-## Obsidian 원본에서 다시 변환하려면
+push하면 GitHub Actions가 1-2분 안에 자동으로 사이트에 반영합니다.
 
-Obsidian Vault의 `FinDA/7주차 수업`, `FinDA/8주차 수업` 원본을 고친 뒤 아래를 실행하면
-위키링크와 이미지 임베드를 변환해 `docs/`를 다시 만들고, 강사 메모를 `instructor-notes/`로 분리합니다.
+## 강사용 풀이의 위치
 
-```bash
-python tools/convert.py
-```
+원본 문서 끝의 "### 강사 메모 (수강생 배포 전 확인)" 섹션에 실습 풀이를 적으면,
+변환 스크립트가 그 부분을 사이트에서 제외하고 로컬 `instructor-notes/`로 분리합니다.
+`instructor-notes/`는 .gitignore에 있어 GitHub에 올라가지 않습니다.
 
 ## 목차 순서를 바꾸려면
 
 `mkdocs.yml` 맨 아래 `nav:` 항목의 순서나 표시명을 수정합니다.
-
-## 강사 메모를 사이트에 포함하려면
-
-`instructor-notes/`의 내용을 해당 `docs/` 파일 끝에 붙여 넣으면 됩니다.
-기본값은 **미포함**입니다.
 
 ## URL 형식
 
