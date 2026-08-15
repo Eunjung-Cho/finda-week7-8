@@ -249,13 +249,28 @@ flowchart TD
 
 - (1) Explorer에서 프로젝트 옆 점 세 개 → "데이터셋 만들기"
 - (2) 데이터셋 ID 입력
-- (3) 위치(Location): **원본 `tabformer` 데이터셋과 동일하게** (다르면 교차 참조 쿼리가 실패합니다. 서울 리전을 쓴다면 `asia-northeast3`입니다)
+- (3) 위치(Location) 선택
 
-> 📷 스크린샷 추가 예정: (tabformer_mart 데이터셋 만들기 화면, 위치 설정 강조)
+오늘 만들 데이터셋은 **두 개**입니다.
+
+| 데이터셋 ID | 위치 | 용도 |
+| --- | --- | --- |
+| `tabformer_stg` | `asia-northeast3` | Silver 층 — 정제와 조인이 끝난 테이블 |
+| `tabformer_mart` | `asia-northeast3` | Gold 층 — 질문에 답하는 집계 마트 |
+
+> ⚠️ **위치(Location)의 기본값은 `US`입니다.** 원본 `tabformer`가 서울(`asia-northeast3`)에 있으므로 **반드시 같은 위치로** 만드세요. 다르면 쿼리를 실행하는 순간 `Dataset ... was not found in location US` 오류가 납니다. 오늘 가장 많이 보게 될 오류입니다.
+
+> 📷 스크린샷 추가 예정: (데이터셋 만들기 화면 — 위치 드롭다운에서 asia-northeast3 선택 부분 강조)
+
+**그럼 테이블도 미리 만들어야 할까요? 아닙니다.** 우리가 손으로 만드는 것은 데이터셋까지입니다.
+
+BigQuery는 **폴더(데이터셋)는 사람이 만들고, 파일(테이블)은 쿼리가 만든다**고 생각하면 편합니다. 잠시 후 배울 `CREATE TABLE ... AS SELECT`가 테이블 생성과 데이터 적재를 **한 번에** 처리하고, 컬럼 구조까지 SELECT 결과를 보고 자동으로 정합니다. MySQL에서 `CREATE TABLE`로 스키마를 먼저 정의한 뒤 `INSERT`로 채우던 두 단계가 여기서는 필요 없습니다.
+
+반대로 **데이터셋은 자동으로 만들어지지 않습니다.** 없는 데이터셋에 테이블을 만들려고 하면 위의 `Not found: Dataset` 오류가 납니다. 준비물이 딱 이것뿐이라고 기억하세요.
 
 테이블 이름에도 관례가 있습니다. 정답은 없지만 팀 안에서 일관되게 씁니다.
 
-- (1) 집계 마트: `daily_user_tx`, `monthly_age_mcc_spend`처럼 그레인이 이름에 드러나게
+- (1) 집계 마트: `monthly_age_mcc_spend`, `daily_store_sales`처럼 그레인이 이름에 드러나게
 - (2) 뷰: `v_` 접두어 (예: `v_transactions_clean`)
 - (3) 피해야 할 이름: `temp`, `test2`, `final_final` — 3개월 뒤의 나는 남입니다
 
