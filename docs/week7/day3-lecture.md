@@ -34,7 +34,7 @@ status: draft-v0.2
 - (2) [Day 2 강의안](day2-lecture.md)에서 다룬 세 테이블의 컬럼 의미와 조인 키를 기억해 두세요. 오늘은 그 테이블들을 "재료"로 씁니다.
 - (3) 쿼리 편집기 우측 상단의 "이 쿼리를 실행하면 N 처리됨" 표시를 오늘 하루 종일 봅니다. 오늘의 주인공 중 하나입니다.
 - (4) **오늘은 세 세션 모두 직접 쿼리를 씁니다.** 듣기만 하는 시간은 없습니다. 콘솔을 열어 두세요.
-- (5) 1일차 적재가 잘 안 되었거나 데이터가 사라졌다면, 공유 데이터셋 `finda-week7-505502.tabformer`를 대신 읽어서 실습할 수 있습니다. 만들기는 항상 본인 프로젝트에 합니다.
+- (5) **읽기는 강사 프로젝트, 쓰기는 본인 프로젝트**입니다. 자료의 쿼리는 강사 프로젝트(`finda-week7-505502`) 기준으로 적혀 있으니, 테이블을 **만드는** 쿼리에서는 프로젝트 ID를 본인 것으로 바꾸세요. 1일차 적재가 잘 안 되었어도 강사 프로젝트의 `tabformer`를 읽어 실습할 수 있습니다.
 
 오늘의 큰 그림 한 줄: 지난 이틀은 "데이터를 올리고 이해하는 날"이었고, 오늘은 **"매일 반복될 분석을 미리 준비해 두는 날"**입니다.
 
@@ -231,7 +231,7 @@ flowchart TD
 
 ## Session 3-2. BigQuery로 데이터 마트 만들기 (60분)
 
-2-1부터 2-5까지의 쿼리는 **개념 설명용 데모**입니다. 강사 화면을 따라 함께 실행하고, 문법을 익힌 뒤 2-6에서 직접 만듭니다. `YOUR_PROJECT`는 본인 프로젝트 ID로 바꿔서 실행하세요.
+2-1부터 2-5까지의 쿼리는 **개념 설명용 데모**입니다. 강사 화면을 따라 함께 실행하고, 문법을 익힌 뒤 2-6에서 직접 만듭니다. 쿼리에 적힌 `finda-week7-505502`는 **강사 프로젝트 ID**입니다. `tabformer`를 **읽는 것**은 그대로 두어도 되지만, `tabformer_stg`와 `tabformer_mart`에 **만드는 쿼리는 본인 프로젝트 ID로 바꿔야** 합니다 (강사 프로젝트에는 조회 권한만 있어 생성이 거부됩니다).
 
 ### 2-1. 데이터셋 분리와 네이밍 관례 (5분)
 
@@ -264,22 +264,22 @@ flowchart TD
 지금까지는 SELECT 결과를 화면으로만 봤습니다. 그 결과를 테이블로 저장하는 문법이 **CTAS(CREATE TABLE AS SELECT)**입니다.
 
 ```sql
-CREATE TABLE `YOUR_PROJECT.tabformer_stg.smoke_test` AS
+CREATE TABLE `finda-week7-505502.tabformer_stg.smoke_test` AS
 SELECT
     t.user_id,
     COUNT(*) AS tx_cnt
-FROM `YOUR_PROJECT.tabformer.transactions` AS t
+FROM `finda-week7-505502.tabformer.transactions` AS t
 GROUP BY t.user_id;
 ```
 
 이 문법의 문제: 같은 문장을 다시 실행하면 "이미 테이블이 있습니다" 오류가 납니다. 그래서 마트 작업에서는 거의 항상 이렇게 씁니다.
 
 ```sql
-CREATE OR REPLACE TABLE `YOUR_PROJECT.tabformer_stg.smoke_test` AS
+CREATE OR REPLACE TABLE `finda-week7-505502.tabformer_stg.smoke_test` AS
 SELECT
     t.user_id,
     COUNT(*) AS tx_cnt
-FROM `YOUR_PROJECT.tabformer.transactions` AS t
+FROM `finda-week7-505502.tabformer.transactions` AS t
 GROUP BY t.user_id;
 ```
 
@@ -289,7 +289,7 @@ GROUP BY t.user_id;
 확인했으면 연습용 테이블은 지웁니다.
 
 ```sql
-DROP TABLE `YOUR_PROJECT.tabformer_stg.smoke_test`;
+DROP TABLE `finda-week7-505502.tabformer_stg.smoke_test`;
 ```
 
 ### 2-3. 뷰 vs 테이블: 언제 무엇을 쓰는가 (9분)
@@ -299,7 +299,7 @@ DROP TABLE `YOUR_PROJECT.tabformer_stg.smoke_test`;
 1-1에서 본 "로직 불일치" 문제를 뷰로 풀어 봅시다. 금액 정제와 날짜 합성을 **한 곳에만** 정의합니다.
 
 ```sql
-CREATE OR REPLACE VIEW `YOUR_PROJECT.tabformer_stg.v_transactions_clean` AS
+CREATE OR REPLACE VIEW `finda-week7-505502.tabformer_stg.v_transactions_clean` AS
 SELECT
     t.user_id,
     t.card_id,
@@ -313,7 +313,7 @@ SELECT
     t.mcc,
     t.errors,
     t.is_fraud
-FROM `YOUR_PROJECT.tabformer.transactions` AS t;
+FROM `finda-week7-505502.tabformer.transactions` AS t;
 ```
 
 이제 팀 전원이 `v_transactions_clean`을 조회하면, `$` 제거 로직이 다를 일이 없습니다. 이것이 Silver 층의 역할을 뷰로 대신한 것입니다. 뷰는 일반 테이블과 똑같이 조회할 수 있습니다.
@@ -324,7 +324,7 @@ SELECT
     v.tx_date,
     v.amount_usd,
     v.merchant_city
-FROM `YOUR_PROJECT.tabformer_stg.v_transactions_clean` AS v
+FROM `finda-week7-505502.tabformer_stg.v_transactions_clean` AS v
 WHERE v.is_fraud = "Yes"
 LIMIT 10;
 ```
@@ -396,7 +396,7 @@ flowchart LR
 문법은 테이블을 만들 때 두 줄 추가하는 것이 전부입니다.
 
 ```sql
-CREATE OR REPLACE TABLE `YOUR_PROJECT.tabformer_stg.example_table`
+CREATE OR REPLACE TABLE `finda-week7-505502.tabformer_stg.example_table`
 PARTITION BY DATE_TRUNC(tx_date, MONTH)   -- 월 단위로 조각내기
 CLUSTER BY user_id                        -- 조각 안에서 user_id 순으로 정렬
 AS

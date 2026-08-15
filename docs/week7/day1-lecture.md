@@ -330,23 +330,23 @@ bq load \
 
 ### STEP 5. 적재 검증 (5분)
 
-BigQuery 콘솔의 쿼리 편집기에서 실행합니다. (`YOUR_PROJECT`는 본인 프로젝트 ID로 교체)
+BigQuery 콘솔의 쿼리 편집기에서 실행합니다. (`finda-week7-505502`는 본인 프로젝트 ID로 교체)
 
 ```sql
 -- 행 수 확인
-SELECT COUNT(*) AS n_tx    FROM `YOUR_PROJECT.tabformer.transactions`;  -- 약 2,400만
-SELECT COUNT(*) AS n_users FROM `YOUR_PROJECT.tabformer.users`;         -- 약 2,000
-SELECT COUNT(*) AS n_cards FROM `YOUR_PROJECT.tabformer.cards`;
+SELECT COUNT(*) AS n_tx    FROM `finda-week7-505502.tabformer.transactions`;  -- 약 2,400만
+SELECT COUNT(*) AS n_users FROM `finda-week7-505502.tabformer.users`;         -- 약 2,000
+SELECT COUNT(*) AS n_cards FROM `finda-week7-505502.tabformer.cards`;
 
 -- users의 user_id가 잘 부여되었는지 확인 (0부터 시작, 사람 수 - 1에서 끝)
 SELECT
     MIN(u.user_id) AS min_id,
     MAX(u.user_id) AS max_id
 FROM
-    `YOUR_PROJECT.tabformer.users` AS u;
+    `finda-week7-505502.tabformer.users` AS u;
 
 -- 미리보기
-SELECT * FROM `YOUR_PROJECT.tabformer.transactions` LIMIT 10;
+SELECT * FROM `finda-week7-505502.tabformer.transactions` LIMIT 10;
 ```
 
 체크포인트:
@@ -427,7 +427,7 @@ bq load --autodetect --source_format=CSV tabformer.cards cards_clean.csv
 
 ### 기초 SQL 리프레셔 — SQLD와 같은 점, BigQuery에서 달라지는 점 (25분)
 
-여러분 대부분이 이미 아는 문법입니다. 그래서 각 문법마다 두 줄로 정리합니다: (a) SQLD에서 배운 것과 같은 점, (b) BigQuery에서 달라지는 점. 데모 쿼리는 강사와 함께 직접 실행합니다. (`YOUR_PROJECT`는 본인 프로젝트 ID로 교체)
+여러분 대부분이 이미 아는 문법입니다. 그래서 각 문법마다 두 줄로 정리합니다: (a) SQLD에서 배운 것과 같은 점, (b) BigQuery에서 달라지는 점. 데모 쿼리는 강사와 함께 직접 실행합니다. (`finda-week7-505502`는 본인 프로젝트 ID로 교체)
 
 #### (1) SELECT와 LIMIT
 
@@ -441,7 +441,7 @@ SELECT
     t.merchant_name,
     t.amount
 FROM
-    `YOUR_PROJECT.tabformer.transactions` AS t
+    `finda-week7-505502.tabformer.transactions` AS t
 LIMIT 10;
 ```
 
@@ -459,7 +459,7 @@ SELECT
     t.merchant_city,
     t.amount
 FROM
-    `YOUR_PROJECT.tabformer.transactions` AS t
+    `finda-week7-505502.tabformer.transactions` AS t
 WHERE
     t.is_fraud = 'Yes'
 LIMIT 10;
@@ -475,7 +475,7 @@ LIMIT 10;
 SELECT
     t.amount
 FROM
-    `YOUR_PROJECT.tabformer.transactions` AS t
+    `finda-week7-505502.tabformer.transactions` AS t
 ORDER BY
     t.amount DESC
 LIMIT 5;
@@ -498,7 +498,7 @@ SELECT
     DATE(t.year, t.month, t.day)                         AS tx_date,      -- (2) 흩어진 연, 월, 일을 날짜로
     t.time
 FROM
-    `YOUR_PROJECT.tabformer.transactions` AS t
+    `finda-week7-505502.tabformer.transactions` AS t
 LIMIT 5;
 ```
 
@@ -516,7 +516,7 @@ SELECT
     t.year,
     COUNT(*) AS n_tx
 FROM
-    `YOUR_PROJECT.tabformer.transactions` AS t
+    `finda-week7-505502.tabformer.transactions` AS t
 GROUP BY
     t.year
 ORDER BY
@@ -534,7 +534,7 @@ SELECT
     t.year,
     COUNT(*) AS n_tx
 FROM
-    `YOUR_PROJECT.tabformer.transactions` AS t
+    `finda-week7-505502.tabformer.transactions` AS t
 GROUP BY
     t.year
 HAVING
@@ -553,7 +553,7 @@ ORDER BY
 SELECT
     COUNT(DISTINCT t.merchant_state) AS n_states
 FROM
-    `YOUR_PROJECT.tabformer.transactions` AS t;
+    `finda-week7-505502.tabformer.transactions` AS t;
 ```
 
 #### 리프레셔 마무리: 작성 순서와 실행 순서

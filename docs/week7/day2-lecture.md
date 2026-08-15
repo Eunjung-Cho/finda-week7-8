@@ -265,7 +265,7 @@ erDiagram
 
 Day 1에서 이미 마주친 특성들을 "왜 이렇게 생겼는가"의 관점으로 다시 봅니다. 이것은 이 데이터의 결함이 아니라, **원천 데이터의 보편적인 모습**입니다.
 
-- (1) **amount가 달러 기호 포함 문자열입니다.** 원천 시스템은 사람이 읽기 좋은 형태로 값을 남기는 경우가 많습니다. 분석 전에 숫자로 바꾸는 정제는 분석가의 일상 업무입니다. 함께 실행해 봅시다 (개념 확인용 데모 쿼리, `YOUR_PROJECT`는 본인 프로젝트 ID로 교체).
+- (1) **amount가 달러 기호 포함 문자열입니다.** 원천 시스템은 사람이 읽기 좋은 형태로 값을 남기는 경우가 많습니다. 분석 전에 숫자로 바꾸는 정제는 분석가의 일상 업무입니다. 함께 실행해 봅시다 (개념 확인용 데모 쿼리, `finda-week7-505502`는 본인 프로젝트 ID로 교체).
 
     ```sql
     -- 데모: 문자열 금액을 숫자로 정제하기 (전과 후 비교)
@@ -273,7 +273,7 @@ Day 1에서 이미 마주친 특성들을 "왜 이렇게 생겼는가"의 관점
         t.amount                                             AS raw_amount,
         SAFE_CAST(REPLACE(t.amount, "$", "") AS NUMERIC)     AS clean_amount
     FROM
-        `YOUR_PROJECT.tabformer.transactions` AS t
+        `finda-week7-505502.tabformer.transactions` AS t
     LIMIT 10;
     ```
 
@@ -288,7 +288,7 @@ Day 1에서 이미 마주친 특성들을 "왜 이렇게 생겼는가"의 관점
         t.merchant_name,
         DATE(t.year, t.month, t.day) AS tx_date
     FROM
-        `YOUR_PROJECT.tabformer.transactions` AS t
+        `finda-week7-505502.tabformer.transactions` AS t
     WHERE
         SAFE_CAST(REPLACE(t.amount, "$", "") AS NUMERIC) < 0
     LIMIT 10;
@@ -306,7 +306,7 @@ Day 1에서 이미 마주친 특성들을 "왜 이렇게 생겼는가"의 관점
         t.is_fraud,
         COUNT(*) AS cnt
     FROM
-        `YOUR_PROJECT.tabformer.transactions` AS t
+        `finda-week7-505502.tabformer.transactions` AS t
     GROUP BY
         t.is_fraud;
     ```
@@ -353,7 +353,7 @@ flowchart TD
 
 공통 규칙:
 
-- 테이블은 `YOUR_PROJECT.tabformer.transactions` 형태로 참조하고, `YOUR_PROJECT`는 본인 프로젝트 ID로 교체합니다.
+- 테이블은 `finda-week7-505502.tabformer.transactions` 형태로 참조하고, `finda-week7-505502`는 본인 프로젝트 ID로 교체합니다.
 - 금액은 `SAFE_CAST(REPLACE(amount, "$", "") AS NUMERIC)` 패턴으로 정제해 사용합니다 (Session 2-2 데모 참고).
 - 쿼리 실행 전 우측 상단의 예상 처리 바이트를 한 번씩 확인하는 습관을 들이세요.
 
