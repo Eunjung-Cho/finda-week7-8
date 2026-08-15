@@ -95,3 +95,4 @@ nav:
       - Day 1 — BigQuery 입문, 데이터 적재, 기초 쿼리: week7/day1-lecture.md
       - Day 2 — 금융 데이터 분석 직무와 실습 데이터: week7/day2-lecture.md
       - Day 3 — 데이터 마트 설계와 구축: week7/day3-lecture.md
+      - 쿼리 가독성을 높이는 팁: week7/query-style-tips.md
