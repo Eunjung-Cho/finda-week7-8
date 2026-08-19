@@ -16,12 +16,18 @@ IMG_DIR = DOCS / "assets" / "images"
 ATTACH = VAULT / "attachments"
 
 # (원본 파일, 대상 상대 경로)
-# v0.2 개편: 사이트는 7주차 3개 문서만 배포. 8주차는 별도 개편 예정이라 제외.
+# 7주차 3개 문서 + 8주차 개편본(강의안 3개, 사전 배포물 2개)을 배포한다.
+# 수업 중 배포물(재귀 CTE 짝풀이, 이동평균 스켈레톤)은 수업 시점에 나눠 주는 자료라 사이트에서 제외.
 FILES = [
     ("7주차 수업/FinDA_7주차_1일차_BigQuery입문_적재_기초쿼리_v0.2.md", "week7/day1-lecture.md"),
     ("7주차 수업/FinDA_7주차_2일차_금융데이터분석_직무_데이터소개_v0.2.md", "week7/day2-lecture.md"),
     ("7주차 수업/FinDA_7주차_3일차_데이터마트_설계_구축_v0.2.md", "week7/day3-lecture.md"),
     ("7주차 수업/FinDA_7주차_쿼리_가독성_팁_v0.1.md", "week7/query-style-tips.md"),
+    ("8주차 수업/FinDA_8주차_1일차_고급SQL_비즈니스패턴_v0.1.md", "week8/day1-lecture.md"),
+    ("8주차 수업/FinDA_8주차_1일차_사전배포_윈도우프레임_워크시트_v0.1.md", "week8/day1-worksheet.md"),
+    ("8주차 수업/FinDA_8주차_2일차_SQL_금융데이터분석_v0.1.md", "week8/day2-lecture.md"),
+    ("8주차 수업/FinDA_8주차_3일차_DART_BigQuery_재무분석_v0.1.md", "week8/day3-lecture.md"),
+    ("8주차 수업/FinDA_8주차_3일차_사전배포_DART키발급_GCP점검_가이드_v0.1.md", "week8/day3-prep-guide.md"),
 ]
 
 # 위키링크 대상 -> (대상 md 파일명, 기본 라벨)  ※ 같은 폴더(week7) 기준 상대 경로
