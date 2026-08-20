@@ -4,6 +4,7 @@
 - Obsidian 위키링크 [[이름]] / [[이름|별칭]] -> 상대 md 링크
 - Obsidian 이미지 임베드 ![[Pasted image X.png]] -> ![](../assets/images/X.png)
 """
+import posixpath
 import re
 import shutil
 from pathlib import Path
@@ -32,15 +33,20 @@ FILES = [
     ("8주차 수업/FinDA_8주차_3일차_사전배포_DART키발급_GCP점검_가이드_v0.1.md", "week8/day3-prep-guide.md"),
 ]
 
-# 위키링크 대상 -> (대상 md 파일명, 기본 라벨)  ※ 같은 폴더(week7) 기준 상대 경로
+# 위키링크 대상 -> (docs 기준 경로, 기본 라벨)
+# ※ 경로는 docs/ 기준으로 적고, 링크는 문서가 놓인 폴더 기준 상대 경로로 자동 변환된다
+#    (week8 문서에서 week7 문서를 걸면 ../week7/... 로 나간다)
 WIKILINK_MAP = {
-    "FinDA_7주차_1일차_BigQuery입문_적재_기초쿼리_v0.2": ("day1-lecture.md", "Day 1 강의안"),
-    "FinDA_7주차_2일차_금융데이터분석_직무_데이터소개_v0.2": ("day2-lecture.md", "Day 2 강의안"),
-    "FinDA_7주차_3일차_데이터마트_설계_구축_v0.2": ("day3-lecture.md", "Day 3 강의안"),
-    "FinDA_7주차_쿼리_가독성_팁_v0.1": ("query-style-tips.md", "쿼리 가독성을 높이는 팁"),
-    "FinDA_7주차_쿼리_작성순서_실행순서_v0.1": ("query-execution-order.md", "쿼리 작성 순서와 실행 순서"),
-    "FinDA_7주차_BigQuery_주요문법_v0.1": ("bigquery-syntax.md", "BigQuery 주요 문법 정리"),
+    "FinDA_7주차_1일차_BigQuery입문_적재_기초쿼리_v0.2": ("week7/day1-lecture.md", "Day 1 강의안"),
+    "FinDA_7주차_2일차_금융데이터분석_직무_데이터소개_v0.2": ("week7/day2-lecture.md", "Day 2 강의안"),
+    "FinDA_7주차_3일차_데이터마트_설계_구축_v0.2": ("week7/day3-lecture.md", "Day 3 강의안"),
+    "FinDA_7주차_쿼리_가독성_팁_v0.1": ("week7/query-style-tips.md", "쿼리 가독성을 높이는 팁"),
+    "FinDA_7주차_쿼리_작성순서_실행순서_v0.1": ("week7/query-execution-order.md", "쿼리 작성 순서와 실행 순서"),
+    "FinDA_7주차_BigQuery_주요문법_v0.1": ("week7/bigquery-syntax.md", "BigQuery 주요 문법 정리"),
 }
+
+# 현재 변환 중인 문서가 놓인 폴더 (docs 기준). wiki_sub가 상대 경로 계산에 사용.
+CUR_DIR = ""
 
 # 변환 전에 이전 산출물 정리 (assets와 index.md는 유지)
 # OneDrive와 파일 감시 프로세스가 디렉터리를 잠글 수 있어 파일 단위로 삭제
@@ -74,8 +80,9 @@ def convert_line(line: str) -> str:
         target = m.group(1).strip()
         alias = (m.group(2) or "").strip()
         if target in WIKILINK_MAP:
-            fname, label = WIKILINK_MAP[target]
-            return f"[{alias or label}]({fname})"
+            docs_path, label = WIKILINK_MAP[target]
+            href = posixpath.relpath(docs_path, CUR_DIR or ".")
+            return f"[{alias or label}]({href})"
         return alias or target  # 미지 링크는 텍스트로
 
     line = IMG_RE.sub(img_sub, line)
@@ -86,6 +93,7 @@ def convert_line(line: str) -> str:
 for rel_src, rel_dst in FILES:
     src_path = SRC / rel_src
     dst_path = DOCS / rel_dst
+    CUR_DIR = posixpath.dirname(rel_dst.replace("\\", "/"))
     dst_path.parent.mkdir(parents=True, exist_ok=True)
     out_lines = []
     in_fence = False

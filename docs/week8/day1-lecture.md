@@ -216,7 +216,7 @@ STEP별 힌트입니다. 막히면 순서대로 펼쳐 보세요.
 - (2) **STEP 2** — STEP 1의 결과를 **다시** 집계합니다. 주의: 구하려는 것은 **월별 합계의 평균**이지 거래 한 건의 평균 금액이 아닙니다. 이 둘을 헷갈리는 것이 이 실습의 1순위 함정입니다.
 - (3) **STEP 3** — STEP 1을 `WITH`로 두고, STEP 2를 스칼라 서브쿼리로 `WHERE`에 넣으면 한 문장이 됩니다. `COUNT`, `MAX`, `MIN`을 한 번에 구하세요.
 
-> ⚠️ **`WHERE`에 `AVG(...)`를 직접 쓰면 오류가 납니다.** 집계는 `WHERE`가 실행되는 시점에 아직 계산되지 않았기 때문입니다. 그래서 평균을 **괄호로 감싼 별도의 쿼리**(스칼라 서브쿼리)로 넣는 것입니다. 이유가 궁금하면 [쿼리 작성 순서와 실행 순서](query-execution-order.md)를 보세요.
+> ⚠️ **`WHERE`에 `AVG(...)`를 직접 쓰면 오류가 납니다.** 집계는 `WHERE`가 실행되는 시점에 아직 계산되지 않았기 때문입니다. 그래서 평균을 **괄호로 감싼 별도의 쿼리**(스칼라 서브쿼리)로 넣는 것입니다. 이유가 궁금하면 [쿼리 작성 순서와 실행 순서](../week7/query-execution-order.md)를 보세요.
 
 > 💡 **STEP 3의 정답이 주어져 있습니다.** 숫자가 맞지 않으면 STEP 3의 조건이 아니라 **STEP 1의 그레인과 금액 정제**를 먼저 의심하세요. 월별 합계가 틀리면 그 뒤는 전부 틀립니다.
 
@@ -340,77 +340,162 @@ FROM m
 
 ### 2-7. 실습: 마케팅팀 요청 1·2번에 답하기 (15분)
 
-실습 1과 같은 방식입니다. 아래를 그대로 복사해 콘솔에 붙여 넣고, STEP을 순서대로 채우세요.
-**앞 STEP의 결과가 다음 STEP의 재료**입니다. 실습 3까지 못 가도 괜찮습니다 — 실습 2가 기본 목표, 실습 3은 도전입니다.
+이번에는 **틀을 드립니다.** 아래를 통째로 복사해 콘솔에 붙여 넣고, `______` 자리만 채우세요.
+빈칸은 전부 **여러분이 판단해야 하는 자리**입니다 — 어느 축으로 묶을지, 창을 어디로 나눌지 같은 것들이요.
+실습 2가 기본 목표, 실습 3은 도전입니다.
 
 **실습 2 — 마케팅팀 요청 1번: "업종별 비중을 나란히 보고 싶어요"**
-
-STEP 1~3은 2-2에서 화면으로 본 그 쿼리를 **안 보고** 다시 만들어 보는 것이고, STEP 4~5가 새 문제(도시 Top 3)입니다.
 
 ```sql
 /*Week8 Day1*/
 --실습2. "어느 업종이 그 달의 몇 %를 가져갔나?"
+
 --STEP1) 월별, 업종(mcc)별 소비금액은? (한 행 = 월 × 업종)
---쿼리:
+SELECT
+    DATE_TRUNC(v.tx_date, ______)  AS ym,        -- 빈칸 A: 월 단위로 자르려면?
+    v.mcc,
+    ______(v.amount_usd)           AS spend      -- 빈칸 B: 소비금액 "합계"
+FROM `finda-week7-505502.tabformer.silver_transactions` AS v
+GROUP BY ______, ______                          -- 빈칸 C: 한 행 = 월 × 업종
+ORDER BY ym, spend DESC;
 
 
 --STEP2) STEP1 결과에 "그 달 전체 소비금액" 열을 옆에 붙이면? (행을 접지 말 것!)
---쿼리:
+WITH monthly_mcc AS (
+    ______                                       -- 빈칸 D: STEP1 쿼리를 그대로 붙여 넣으세요 (ORDER BY는 빼고)
+)
+SELECT
+    m.ym,
+    m.mcc,
+    m.spend,
+    SUM(m.spend) OVER (PARTITION BY ______)  AS month_total   -- 빈칸 E: 창을 어느 축으로 나눌까?
+FROM monthly_mcc AS m
+ORDER BY m.ym, m.spend DESC;
 
 
 --STEP3) 비중(month_share)을 계산하면? 그리고 2019년 12월에서 비중 1위 업종은?
 --검증: 같은 달의 month_share를 전부 더하면 1이 되어야 합니다
 --정답:
---쿼리:
+WITH monthly_mcc AS (
+    ______                                       -- STEP1 쿼리
+)
+SELECT
+    m.ym,
+    m.mcc,
+    m.spend,
+    ______(m.spend, SUM(m.spend) OVER (PARTITION BY m.ym))  AS month_share  -- 빈칸 F: 0 나누기 방어 나눗셈
+FROM monthly_mcc AS m
+WHERE m.ym = ______                              -- 빈칸 G: 2019년 12월 (ym은 그 달 1일입니다)
+ORDER BY month_share DESC
+LIMIT 5;
 
 
 --STEP4) 업종별, 도시별 소비금액은? (한 행 = 업종 × 도시)
 --      온라인 거래(merchant_city = 'ONLINE')를 포함할지 먼저 결정하고, 이유를 주석으로 남기세요
---쿼리:
+--내 결정과 이유:
+SELECT
+    v.mcc,
+    v.merchant_city,
+    SUM(v.amount_usd)  AS spend
+FROM `finda-week7-505502.tabformer.silver_transactions` AS v
+WHERE ______                                     -- 빈칸 H: 온라인을 뺀다면? (포함하기로 했다면 이 줄을 통째로 지우세요)
+GROUP BY ______, ______                          -- 빈칸 I
+ORDER BY v.mcc, spend DESC;
 
 
 --STEP5) 업종마다 소비 상위 3개 도시만 남기면?
 --검증: 업종마다 3행씩 나와야 합니다 (동점이 있는 업종은 3행보다 많을 수 있습니다)
---쿼리:
-
+WITH city_spend AS (
+    ______                                       -- STEP4 쿼리 (ORDER BY는 빼고)
+)
+SELECT c.mcc, c.merchant_city, c.spend
+FROM city_spend AS c
+QUALIFY ______() OVER (PARTITION BY ______ ORDER BY ______ DESC) <= ______   -- 빈칸 J~M
+ORDER BY c.mcc, c.spend DESC;
 ```
 
-STEP별 힌트입니다.
+빈칸이 막히면 여기를 보세요.
 
-- (1) **STEP 1** — 실습 1의 STEP 1에서 `GROUP BY` 축이 하나(`mcc`) 늘어날 뿐입니다.
-- (2) **STEP 2** — "전체 합을 붙이되 행은 유지"가 바로 2-1에서 배운 윈도우 함수의 일입니다. `GROUP BY`를 또 쓰면 행이 접혀 버립니다. 창을 **어느 축으로 나눌지**(PARTITION BY)가 핵심입니다.
-- (3) **STEP 3** — 나눗셈은 `SAFE_DIVIDE`. 검증(합계 = 1)이 안 맞으면 STEP 2의 PARTITION 축이 틀린 것입니다.
-- (4) **STEP 4** — 새 그레인이므로 STEP 1과는 **별도의 집계**가 필요합니다. 온라인 포함/제외는 정답이 없습니다 — 결정과 이유를 남기는 것까지가 문제입니다.
-- (5) **STEP 5** — 2-3에서 배운 `QUALIFY`가 정확히 이 자리를 위한 문법입니다. `RANK`와 `ROW_NUMBER` 중 무엇을 쓸지도 스스로 결정하세요 (동점 처리가 다릅니다).
+- (1) **빈칸 E가 이 실습의 심장입니다.** 여기에 `m.mcc`를 넣으면 "업종 전체 합"이 붙어서 검증(합계 = 1)이 깨집니다. "그 **달** 전체"를 구하는 것이니 창은 **달**로 나눠야 합니다.
+- (2) **빈칸 D는 복사입니다.** STEP 1에서 완성한 쿼리를 그대로 옮기면 됩니다 — CTE는 "앞 단계 결과에 이름을 붙인 것"이라는 걸 손으로 확인하는 자리입니다.
+- (3) **빈칸 H는 정답이 없습니다.** 포함해도 되고 빼도 됩니다. 결정과 이유를 주석으로 남기는 것까지가 문제입니다.
+- (4) **빈칸 J**는 동점을 어떻게 다룰지에 따라 답이 갈립니다 (2-3의 순위 함수 4종). 무엇을 골랐든 이유를 말할 수 있으면 됩니다.
 
 **실습 3 (도전) — 마케팅팀 요청 2번: "작년 같은 달 대비 증감률이 필요해요"**
 
 ```sql
 --실습3. "작년 같은 달보다 늘었나, 줄었나?"
---STEP1) 연령대별, 월별 소비금액은? (2018~2019년만. 연령대는 users 조인이 필요)
---쿼리:
+
+--STEP1) 연령대별, 월별 소비금액은? (2018~2019년 전체. 연령대는 users 조인이 필요)
+SELECT
+    CONCAT(CAST(DIV(u.current_age, 10) * 10 AS STRING), '대')  AS age_group,
+    DATE_TRUNC(v.tx_date, MONTH)                               AS ym,
+    ______(v.amount_usd)                                       AS spend   -- 빈칸 N
+FROM `finda-week7-505502.tabformer.silver_transactions` AS v
+JOIN `finda-week7-505502.tabformer.users` AS u
+    ON ______ = ______                           -- 빈칸 O: 조인 키 (cards가 아닙니다)
+WHERE v.tx_date BETWEEN DATE '2018-01-01' AND DATE '2019-12-31'
+GROUP BY ______, ______                          -- 빈칸 P
+ORDER BY age_group, ym;
 
 
---STEP2) STEP1 결과에 "작년 같은 달의 소비금액" 열을 옆에 붙이면? (몇 행 전을 당겨와야 할까요?)
+--STEP2) STEP1 결과에 "작년 같은 달의 소비금액" 열을 옆에 붙이면?
 --검증: 2019-01 행의 spend_last_yr는 2018-01 행의 spend와 같아야 합니다
---쿼리:
+WITH by_age_month AS (
+    ______                                       -- STEP1 쿼리 (ORDER BY는 빼고)
+)
+SELECT
+    b.age_group,
+    b.ym,
+    b.spend,
+    LAG(b.spend, ______) OVER (PARTITION BY ______ ORDER BY ______)  AS spend_last_yr  -- 빈칸 Q~S
+FROM by_age_month AS b
+ORDER BY b.age_group, b.ym;
 
 
 --STEP3) 증감률(yoy)을 계산하면?
---쿼리:
+WITH by_age_month AS (
+    ______                                       -- STEP1 쿼리
+), with_yoy AS (
+    SELECT
+        b.age_group,
+        b.ym,
+        b.spend,
+        LAG(b.spend, 12) OVER (PARTITION BY b.age_group ORDER BY b.ym)  AS spend_last_yr
+    FROM by_age_month AS b
+)
+SELECT
+    w.age_group,
+    w.ym,
+    w.spend,
+    w.spend_last_yr,
+    ______(w.spend, w.spend_last_yr) - ______   AS yoy    -- 빈칸 T, U: 증감률 = (올해 ÷ 작년) - 1
+FROM with_yoy AS w
+ORDER BY w.age_group, w.ym;
 
 
---STEP4) 출력을 2019년만 남기면? (이 WHERE를 STEP1에 두면 왜 안 되는지 주석 한 줄로)
+--STEP4) 출력을 2019년만 남기면?
 --검증: 연령대 × 12개월 행이 나오고, 2019-01의 yoy도 NULL이 아니어야 합니다
---쿼리:
+WITH by_age_month AS (
+    ______                                       -- STEP1 쿼리 (기간은 그대로 2018~2019!)
+), with_yoy AS (
+    ______                                       -- STEP3의 with_yoy 부분
+)
+SELECT
+    w.age_group, w.ym, w.spend, w.spend_last_yr,
+    SAFE_DIVIDE(w.spend, w.spend_last_yr) - 1   AS yoy
+FROM with_yoy AS w
+WHERE ______                                     -- 빈칸 V: 2019년만
+ORDER BY w.age_group, w.ym;
 
+--이 WHERE를 STEP1의 WHERE로 옮기면 왜 안 되나요? 한 줄로:
 ```
 
-STEP별 힌트입니다.
+빈칸이 막히면 여기를 보세요.
 
-- (1) **STEP 1** — 연령대는 `DIV(u.current_age, 10) * 10` (7주차 표준 스니펫). 조인 키는 `v.user_id = u.user_id`.
-- (2) **STEP 2** — `LAG`의 두 번째 인자를 생각해 보세요. 월 단위 시계열에서 "작년 같은 달"은 몇 행 전일까요? 그리고 창은 **연령대별로** 나뉘어야 합니다 — 안 나누면 30대의 작년 값이 40대에 붙습니다.
-- (3) **STEP 4** — 이 실습의 심장입니다. **창에는 2018년을 태우고, 출력에서만 2019년을 자릅니다.** 2018년을 STEP 1에서 잘라 버리면 2019년 1월이 당겨올 행이 없습니다.
+- (1) **빈칸 Q** — 월 단위 시계열에서 "작년 같은 달"은 몇 행 전일까요? 검증(2019-01 ↔ 2018-01)이 이 답을 확인해 줍니다.
+- (2) **빈칸 R을 비워 두면 안 됩니다.** 창을 연령대로 나누지 않으면 30대의 작년 값이 40대 행에 붙습니다. 실행은 되고 숫자도 나오는데 틀린 숫자입니다 — 가장 무서운 종류의 버그죠.
+- (3) **빈칸 V가 이 실습의 심장입니다.** STEP 4의 마지막 질문(왜 STEP 1로 옮기면 안 되는가)에 답할 수 있으면 오늘 2교시는 성공입니다.
 
 > ⚠️ **`LAG(…, 12)`는 "12행 전"이지 "12개월 전"이 아닙니다** (2-4에서 본 함정). 중간에 빈 월이 있으면 조용히 어긋납니다. STEP 2의 검증이 그 어긋남을 잡아 줍니다 — 검증 없이 넘어가지 마세요.
 
