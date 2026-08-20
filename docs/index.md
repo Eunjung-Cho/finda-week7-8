@@ -20,7 +20,7 @@ flowchart LR
 | Day 2 (토) | 금융 데이터 분석이 하는 일, 실습 데이터(IBM TabFormer) 자세히 알기, 집계 실습 | [강의안](week7/day2-lecture.md) |
 | Day 3 (일) | 데이터 모델링과 데이터 마트 개념, BigQuery로 마트 구축, 실습 | [강의안](week7/day3-lecture.md) |
 
-참고 자료: [쿼리 가독성을 높이는 팁](week7/query-style-tips.md)
+참고 자료: [쿼리 작성 순서와 실행 순서](week7/query-execution-order.md) · [BigQuery 주요 문법 정리](week7/bigquery-syntax.md) · [쿼리 가독성을 높이는 팁](week7/query-style-tips.md)
 
 ## 8주차 — 고급 SQL과 금융 데이터 분석
 

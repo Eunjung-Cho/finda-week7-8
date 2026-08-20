@@ -23,6 +23,8 @@ FILES = [
     ("7주차 수업/FinDA_7주차_2일차_금융데이터분석_직무_데이터소개_v0.2.md", "week7/day2-lecture.md"),
     ("7주차 수업/FinDA_7주차_3일차_데이터마트_설계_구축_v0.2.md", "week7/day3-lecture.md"),
     ("7주차 수업/FinDA_7주차_쿼리_가독성_팁_v0.1.md", "week7/query-style-tips.md"),
+    ("7주차 수업/FinDA_7주차_쿼리_작성순서_실행순서_v0.1.md", "week7/query-execution-order.md"),
+    ("7주차 수업/FinDA_7주차_BigQuery_주요문법_v0.1.md", "week7/bigquery-syntax.md"),
     ("8주차 수업/FinDA_8주차_1일차_고급SQL_비즈니스패턴_v0.1.md", "week8/day1-lecture.md"),
     ("8주차 수업/FinDA_8주차_1일차_사전배포_윈도우프레임_워크시트_v0.1.md", "week8/day1-worksheet.md"),
     ("8주차 수업/FinDA_8주차_2일차_SQL_금융데이터분석_v0.1.md", "week8/day2-lecture.md"),
@@ -36,6 +38,8 @@ WIKILINK_MAP = {
     "FinDA_7주차_2일차_금융데이터분석_직무_데이터소개_v0.2": ("day2-lecture.md", "Day 2 강의안"),
     "FinDA_7주차_3일차_데이터마트_설계_구축_v0.2": ("day3-lecture.md", "Day 3 강의안"),
     "FinDA_7주차_쿼리_가독성_팁_v0.1": ("query-style-tips.md", "쿼리 가독성을 높이는 팁"),
+    "FinDA_7주차_쿼리_작성순서_실행순서_v0.1": ("query-execution-order.md", "쿼리 작성 순서와 실행 순서"),
+    "FinDA_7주차_BigQuery_주요문법_v0.1": ("bigquery-syntax.md", "BigQuery 주요 문법 정리"),
 }
 
 # 변환 전에 이전 산출물 정리 (assets와 index.md는 유지)
