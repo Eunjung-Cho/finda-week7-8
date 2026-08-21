@@ -464,7 +464,7 @@ HHI를 조금 더 깊이 봅니다.
 - (3) 오른쪽 아래로 갈수록 위험 — 신용은 낮고 빚은 많은 구석입니다.
 - (4) 모양이 어제 본 confusion matrix와 닮았지만 **다른 물건**입니다. 그건 "예측 vs 실제"의 2×2였고, 이건 **고객 특성 두 축**의 격자입니다.
 
-아래를 복사해 STEP 순서대로 완성하세요.
+아래를 복사해 붙여 넣으세요. **STEP 1·2는 완성된 쿼리**입니다 — 그대로 실행하며 결과를 읽고, **STEP 3~4의 빈칸(`____`) 5곳**만 채우면 됩니다.
 
 ```sql
 /*Week8 Day2*/
@@ -472,30 +472,64 @@ HHI를 조금 더 깊이 봅니다.
 --사용 테이블: `finda-week7-505502.tabformer.silver_transactions` (거래)
 --            `finda-week7-505502.tabformer.users` (fico_score, total_debt, yearly_income_person)
 --            `finda-week7-505502.tabformer.cards` (credit_limit)
---가이드: 사용자 단위로 먼저 만들고(profile), 그다음 격자로 올립니다(matrix). 2-2의 코드가 뼈대.
+--가이드: STEP1·2는 완성 쿼리입니다. 실행하며 읽기만 하세요. 여러분이 채우는 것은 STEP3~4의 빈칸 5곳.
 
---STEP1) 사용자별 카드 한도 합계는? (한 행 = 사용자)
---힌트: cards의 키 이름은 user 입니다 (user_id 아님!)
---쿼리:
+--STEP1) 사용자별 카드 한도 합계 (한 행 = 사용자) — 그대로 실행해 보세요
+--       주의: cards의 키 이름은 user 입니다 (user_id 아님!)
+SELECT c.user AS user_id, SUM(c.credit_limit) AS total_limit
+FROM `finda-week7-505502.tabformer.cards` AS c
+GROUP BY c.user;
 
+--STEP2) 사용자×월 소비금액과 사기 거래 건수 (한 행 = 사용자 × 월, 2018년 이후) — 그대로 실행
+SELECT
+    v.user_id,
+    DATE_TRUNC(v.tx_date, MONTH) AS ym,
+    SUM(v.amount_usd) AS spend,
+    COUNTIF(v.is_fraud = 'Yes') AS fraud_cnt
+FROM `finda-week7-505502.tabformer.silver_transactions` AS v
+WHERE v.tx_date >= DATE '2018-01-01'
+GROUP BY v.user_id, ym;
 
---STEP2) 사용자×월 소비금액과 사기 거래 건수는? (한 행 = 사용자 × 월, 2018년 이후)
---힌트: DATE_TRUNC(tx_date, MONTH) + SUM + COUNTIF(is_fraud = 'Yes')
---쿼리:
-
-
---STEP3) 사용자별 프로필을 만들면? (한 행 = 사용자)
---      컬럼: fico_band, dti_band, 평균 소진율, 사기 경험 여부
---힌트1: CASE 구간화 2개 (FICO는 2-2의 5구간, DTI는 0.5 미만/0.5~1/1~2/2 이상)
---힌트2: 소진율 = 월 소비 ÷ 한도 합계를 AVG로, 사기 경험 = MAX(월 사기 건수) > 0
---쿼리:
-
-
---STEP4) 밴드 × 밴드 격자로 올리면? (한 행 = fico_band × dti_band)
---      컬럼: users, avg_utilization, fraud_victim_rate
+--STEP3~4) 사용자별 프로필(한 행 = 사용자) → 밴드 × 밴드 격자(한 행 = 밴드 × 밴드)
+--구조는 잡아 두었습니다. ____ 5곳만 채우면 완성.
+WITH limits AS (
+    --빈칸1: STEP1의 SELECT문을 통째로 붙여 넣으세요 (끝의 세미콜론은 빼고)
+    ____
+), monthly AS (
+    --빈칸2: STEP2의 SELECT문을 통째로 붙여 넣으세요 (끝의 세미콜론은 빼고)
+    ____
+), profile AS (      -- 한 행 = 사용자
+    SELECT
+        u.user_id,
+        CASE                                        -- FICO 5구간 (이미 채워둠 — 2-2 그대로)
+            WHEN u.fico_score >= 800 THEN '(1) 800+'
+            WHEN u.fico_score >= 740 THEN '(2) 740-799'
+            WHEN u.fico_score >= 670 THEN '(3) 670-739'
+            WHEN u.fico_score >= 580 THEN '(4) 580-669'
+            ELSE '(5) ~579'
+        END AS fico_band,
+        CASE
+            --빈칸3: DTI 밴드 4구간 — 위 CASE를 본떠 채우세요
+            --      DTI = SAFE_DIVIDE(u.total_debt, u.yearly_income_person)
+            --      구간: 0.5 미만 '(1) DTI < 0.5' / 1 미만 '(2) 0.5-1' / 2 미만 '(3) 1-2' / ELSE '(4) 2+'
+            ____
+        END AS dti_band,
+        AVG(SAFE_DIVIDE(m.spend, l.total_limit)) AS avg_util,   -- 평균 한도 소진율 (이미 채워둠)
+        MAX(m.fraud_cnt) > 0 AS is_fraud_victim                 -- 사기 경험 여부 (이미 채워둠)
+    FROM `finda-week7-505502.tabformer.users` AS u
+    JOIN monthly AS m ON u.user_id = m.user_id
+    JOIN limits AS l ON u.user_id = l.user_id
+    GROUP BY u.user_id, fico_band, dti_band
+)
+SELECT                                              -- STEP4) 격자로 올리기
+    p.fico_band, p.dti_band,
+    ____ AS users,               --빈칸4: 칸에 속한 사용자 수
+    AVG(p.avg_util) AS avg_utilization,
+    ____ AS fraud_victim_rate    --빈칸5: 사기 경험자 비율 — COUNTIF(...)를 COUNT(*)로 나누기 (SAFE_DIVIDE)
+FROM profile AS p
+GROUP BY p.fico_band, p.dti_band
+ORDER BY p.fico_band, p.dti_band;
 --검증: users를 전부 더하면 전체 사용자 수(약 2,000명)와 같아야 합니다
---쿼리:
-
 
 --STEP5) 해석: 어느 칸이 가장 위험합니까? 리스크팀이 취할 조치를 한 줄 제안하세요
 --해석:
@@ -663,32 +697,64 @@ precision 5%가 나왔다고 실망하기 전에 — 기저율이 0.12%입니다
 
 ### 3-6. 실습: 내 룰의 성적표 (14분)
 
-아래를 복사해 STEP 순서대로 완성하세요. 룰 1(z > 3)과 룰 2(1시간 4건) 중 **하나를 골라** 진행합니다.
+아래를 복사해 붙여 넣으세요. **STEP 1은 완성된 쿼리**(룰 1: z > 3 버전)입니다 — 그대로 실행하며 읽고, **STEP 2의 빈칸(`____`) 4곳**만 채우면 됩니다.
 
 ```sql
 /*Week8 Day2*/
---실습3. "내 룰의 성적표는 몇 점인가?"
+--실습3. "내 룰의 성적표는 몇 점인가?" (룰 1: z > 3 버전)
 --사용 테이블: `finda-week7-505502.tabformer.silver_transactions`
---가이드: 3-2(룰 1) 또는 3-3(룰 2)의 코드가 STEP1의 뼈대입니다. 성적표 틀은 3-5 그대로.
+--가이드: STEP1은 완성 쿼리입니다. 실행하며 읽기만 하세요. 여러분이 채우는 것은 STEP2의 빈칸 4곳.
+--       (빨리 끝나면: 3-3의 tx CTE에 IF(cnt_1h >= 4, TRUE, FALSE) AS flag를 얹으면 룰 2 버전이 됩니다)
 
---STEP1) 거래별 flag를 만들면? (한 행 = 거래 1건 + flag, 2018년 이후)
---힌트(룰 1): 사용자별 mu·sigma CTE → z > 3. 거래 1건뿐인 사용자는 sigma가 NULL이니
---           COALESCE(..., FALSE)로 막아야 성적표가 새지 않습니다
---힌트(룰 2): tx_time IS NOT NULL 필터 + UNIX_SECONDS 조립 + RANGE 3600 PRECEDING
---쿼리:
+--STEP1) 거래별 flag 만들기 (한 행 = 거래 1건 + flag, 2018년 이후) — 그대로 실행해 보세요
+WITH base AS (       -- 한 행 = 거래 1건
+    SELECT v.user_id, v.tx_date, v.amount_usd, v.is_fraud
+    FROM `finda-week7-505502.tabformer.silver_transactions` AS v
+    WHERE v.tx_date >= DATE '2018-01-01'
+), stats AS (        -- 한 행 = 사용자 (개인별 "평소")
+    SELECT b.user_id, AVG(b.amount_usd) AS mu, STDDEV_SAMP(b.amount_usd) AS sigma
+    FROM base AS b
+    GROUP BY b.user_id
+)
+SELECT
+    b.*,
+    -- COALESCE(..., FALSE): 거래 1건뿐인 사용자는 sigma가 NULL → 플래그를 FALSE로 방어
+    COALESCE(SAFE_DIVIDE(b.amount_usd - s.mu, s.sigma) > 3, FALSE) AS flag
+FROM base AS b
+JOIN stats AS s ON b.user_id = s.user_id;
 
+--STEP2) 성적표 뽑기 (한 행짜리 결과). 구조는 잡아 두었습니다. ____ 4곳만 채우면 완성.
+WITH base AS (       -- STEP1과 동일 (이미 채워둠)
+    SELECT v.user_id, v.tx_date, v.amount_usd, v.is_fraud
+    FROM `finda-week7-505502.tabformer.silver_transactions` AS v
+    WHERE v.tx_date >= DATE '2018-01-01'
+), stats AS (
+    SELECT b.user_id, AVG(b.amount_usd) AS mu, STDDEV_SAMP(b.amount_usd) AS sigma
+    FROM base AS b
+    GROUP BY b.user_id
+), flagged AS (      -- 한 행 = 거래 1건 + flag
+    SELECT
+        b.*,
+        COALESCE(SAFE_DIVIDE(b.amount_usd - s.mu, s.sigma) > ____, FALSE) AS flag  --빈칸1: 임계값 (룰 1은 z > 몇?)
+    FROM base AS b
+    JOIN stats AS s ON b.user_id = s.user_id
+)
+SELECT
+    'R1: z>3 고액 이상치' AS rule_name,
+    COUNTIF(f.flag) AS flagged_cnt,
+    COUNTIF(f.flag AND f.is_fraud = 'Yes') AS tp,   -- 잡았고 실제 사기 (이미 채워둠)
+    ____ AS fp,   --빈칸2: 잡았는데 정상 거래 — tp를 본떠 조건만 바꾸세요
+    ____ AS fn,   --빈칸3: 놓친 사기 — flag가 아닌데(NOT) 사기인 것
+    SAFE_DIVIDE(COUNTIF(f.flag AND f.is_fraud = 'Yes'), COUNTIF(f.flag)) AS precision,
+    ____ AS recall  --빈칸4: tp를 전체 사기 건수 COUNTIF(f.is_fraud = 'Yes')로 나누기 (SAFE_DIVIDE)
+FROM flagged AS f;
 
---STEP2) 성적표를 뽑으면? (한 행짜리 결과)
---      컬럼: flagged_cnt, tp, fp, fn, precision, recall
---힌트: COUNTIF 조합. precision의 분모는 COUNTIF(flag), recall의 분모는 COUNTIF(is_fraud = 'Yes')
---쿼리:
-
-
---STEP3) 임계값을 한 단계 바꾸면(z > 2.5 또는 3건) 성적이 어느 방향으로 움직입니까?
+--STEP3) 임계값을 3 → 2.5로 바꿔 다시 실행해 보세요 (빈칸1만 고치면 됩니다)
 --기록(한 줄): precision은 __, recall은 __
 
-
 --STEP4) 내 룰이 놓친 사기(FN)를 3건만 눈으로 보세요. 공통점이 있습니까?
+--힌트: STEP2의 마지막 SELECT를 이걸로 바꾸면 됩니다:
+--      SELECT * FROM flagged AS f WHERE NOT f.flag AND f.is_fraud = 'Yes' LIMIT 3
 --관찰(한 줄):
 --
 ```
