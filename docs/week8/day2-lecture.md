@@ -237,32 +237,52 @@ WINDOW w AS (ORDER BY t.d ROWS BETWEEN 19 PRECEDING AND CURRENT ROW)
 
 ### 1-6. 실습: 이상하게 튄 날 찾기 (17분)
 
-아래를 통째로 복사해 콘솔에 붙여 넣고, STEP 순서대로 쿼리를 완성하세요. 앞 STEP의 결과가 다음 STEP의 재료입니다.
+아래를 통째로 복사해 콘솔에 붙여 넣으세요. **STEP 1·2는 완성된 쿼리**입니다 — 그대로 실행하며 결과를 읽고, **STEP 3의 빈칸(`____`) 4곳**만 채우면 됩니다.
 
 ```sql
 /*Week8 Day2*/
 --실습1. "이상하게 튄 날은 언제인가?"
 --사용 테이블: `본인프로젝트.tabformer.v_daily_spend`
 --            (1-2에서 만든 뷰. 한 행 = 날짜, 거래 없는 날 = 0. 2018~2019년 730행)
---가이드: 1-5의 볼린저 밴드 쿼리가 STEP2까지의 뼈대입니다. 거기에 "이탈만 남기기"를 얹으면 끝.
+--가이드: STEP1·2는 완성 쿼리입니다. 실행하며 읽기만 하세요. 여러분이 채우는 것은 STEP3의 빈칸 4곳.
 
---STEP1) 날짜별 20일 이동평균(ma_20)을 옆에 붙이면? (한 행 = 날짜)
---힌트: AVG() OVER (ORDER BY d ROWS BETWEEN 19 PRECEDING AND CURRENT ROW)
---쿼리:
+--STEP1) 날짜별 20일 이동평균(ma_20)을 옆에 붙입니다 (한 행 = 날짜) — 그대로 실행해 보세요
+SELECT
+    t.d, t.spend,
+    AVG(t.spend) OVER (ORDER BY t.d ROWS BETWEEN 19 PRECEDING AND CURRENT ROW) AS ma_20
+FROM `본인프로젝트.tabformer.v_daily_spend` AS t
+ORDER BY t.d;
 
+--STEP2) 상단/하단 밴드를 붙입니다 — 같은 창을 세 번 쓰므로 WINDOW 절로 창에 이름(w)을 붙였습니다
+--       마지막 컬럼 n_days(창에 실제로 든 행 수)는 STEP3에서 씁니다
+SELECT
+    t.d, t.spend,
+    AVG(t.spend) OVER w AS ma_20,
+    AVG(t.spend) OVER w + 2 * STDDEV_SAMP(t.spend) OVER w AS upper_band,
+    AVG(t.spend) OVER w - 2 * STDDEV_SAMP(t.spend) OVER w AS lower_band,
+    COUNT(t.spend) OVER w AS n_days
+FROM `본인프로젝트.tabformer.v_daily_spend` AS t
+WINDOW w AS (ORDER BY t.d ROWS BETWEEN 19 PRECEDING AND CURRENT ROW);
 
---STEP2) 상단 밴드(ma_20 + 2σ)와 하단 밴드(ma_20 - 2σ)를 옆에 붙이면?
---힌트: STDDEV_SAMP를 같은 창에 — WINDOW 절로 창에 이름을 붙이면 반복이 없어집니다
---쿼리:
-
-
---STEP3) 2019년에 밴드를 벗어난 날짜만 남기면? (위/아래 방향 표시까지)
---힌트1: 윈도우 결과는 WHERE로 못 거릅니다 — WITH로 STEP2를 감싸고 바깥에서 비교하세요 (어제 QUALIFY를 배운 이유와 같은 이유)
---힌트2: 완성 창 조건(COUNT(*) OVER w = 20)을 넣어야 초반의 덜 찬 창이 빠집니다
+--STEP3) 2019년에 밴드를 벗어난 날짜만 남기세요 (위/아래 방향 표시까지)
+--구조는 잡아 두었습니다. ____ 4곳만 채우면 완성.
+WITH banded AS (
+    --빈칸1: STEP2의 SELECT문을 통째로 여기에 붙여 넣으세요 (끝의 세미콜론은 빼고)
+    ____
+)
+SELECT
+    b.d, b.spend, b.ma_20, b.upper_band, b.lower_band,
+    --빈칸2: IF(조건, '위', '아래') — spend가 upper_band보다 크면 '위'
+    ____ AS direction
+FROM banded AS b
+WHERE b.d >= DATE '____'          --빈칸3: 2019년 1월 1일부터만
+  AND b.n_days = ____             --빈칸4: 완성 창만 (창에 몇 행이 다 찼을 때?)
+  AND (b.spend > b.upper_band OR b.spend < b.lower_band)   -- 밴드 이탈 조건 (이미 채워둠)
+ORDER BY b.d;
+--참고: 윈도우 결과는 WHERE로 못 거릅니다. 그래서 WITH로 감싸 "다 계산된 결과"를 바깥에서
+--      비교하는 구조입니다 — 어제 QUALIFY를 배운 이유와 같은 이유.
 --검증: 이탈일이 며칠이든 정상입니다. 0개면 ±2σ를 ±1.5σ로 좁혀 다시 보세요
 --정답: 2019년 이탈일 수 __일 (수업에서 공개)
---쿼리:
-
 
 --STEP4) 해석: 이탈일들이 언제 몰려 있나요? (연말? 특정 이벤트?)
 --해석(주석 두 줄):
