@@ -1,0 +1,2173 @@
+
+<!doctype html>
+<html lang="ko" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="금융 데이터 분석 부트캠프 심화반 2기 — 7주차 BigQuery와 데이터 마트, 8주차 고급 SQL과 금융 데이터 분석">
+      
+      
+        <meta name="author" content="Eunjung Cho">
+      
+      
+        <link rel="canonical" href="https://eunjung-cho.github.io/finda-week7-8/week7/day1-lecture.html">
+      
+      
+        <link rel="prev" href="../index.html">
+      
+      
+        <link rel="next" href="day2-lecture.html">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Day 1 — BigQuery 입문, 데이터 적재, 기초 쿼리 - FinDA_7,8week</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#finda-7주차-1일차--bigquery-입문-데이터-적재-기초-쿼리" class="md-skip">
+          콘텐츠로 이동
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="상단/헤더">
+    <a href="../index.html" title="FinDA_7,8week" class="md-header__button md-logo" aria-label="FinDA_7,8week" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            FinDA_7,8week
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Day 1 — BigQuery 입문, 데이터 적재, 기초 쿼리
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="다크 모드로 전환"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="다크 모드로 전환" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="라이트 모드로 전환"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="라이트 모드로 전환" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="검색" placeholder="검색" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="검색">
+        
+        <button type="reset" class="md-search__icon md-icon" title="지우기" aria-label="지우기" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            검색 초기화
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/Eunjung-Cho/finda-week7-8" title="저장소로 이동" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Eunjung-Cho/finda-week7-8
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="네비게이션" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../index.html" title="FinDA_7,8week" class="md-nav__button md-logo" aria-label="FinDA_7,8week" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    FinDA_7,8week
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/Eunjung-Cho/finda-week7-8" title="저장소로 이동" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Eunjung-Cho/finda-week7-8
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    소개
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7주차. BigQuery와 금융 데이터 분석
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    7주차. BigQuery와 금융 데이터 분석
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Day 1 — BigQuery 입문, 데이터 적재, 기초 쿼리
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--draft-v0.2"></span>
+  
+
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="day1-lecture.html" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Day 1 — BigQuery 입문, 데이터 적재, 기초 쿼리
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--draft-v0.2"></span>
+  
+
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="목차">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      목차
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#오늘의-구성" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        오늘의 구성
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#session-1-1-bigquery-소개-50분" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Session 1-1. BigQuery 소개 (50분)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Session 1-1. BigQuery 소개 (50분)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#도입-우리는-지금-어디에-있나-10분" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        도입: 우리는 지금 어디에 있나 (10분)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#왜-실무는-클라우드-dw를-쓰는가-10분" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        왜 실무는 클라우드 DW를 쓰는가 (10분)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#핵심-개념-세-가지-15분" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        핵심 개념 세 가지 (15분)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gcp-콘솔과-bigquery-studio-화면-구성-10분" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GCP 콘솔과 BigQuery Studio 화면 구성 (10분)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#무료-한도와-비용-안전장치-5분" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        무료 한도와 비용 안전장치 (5분)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#session-1-2-데이터-적재--tabformer를-내-bigquery에-올리기-60분" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Session 1-2. 데이터 적재 — TabFormer를 내 BigQuery에 올리기 (60분)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Session 1-2. 데이터 적재 — TabFormer를 내 BigQuery에 올리기 (60분)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#사전-준비물" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        사전 준비물
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-0-이-실습의-큰-그림-5분" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STEP 0. 이 실습의 큰 그림 (5분)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-1-kaggle에서-데이터-받기-10분" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STEP 1. Kaggle에서 데이터 받기 (10분)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-2-gcp-프로젝트와-bigquery-준비-10분" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STEP 2. GCP 프로젝트와 BigQuery 준비 (10분)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-3-작은-파일-적재-users-cards--colab-전처리-후-콘솔-업로드-15분" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STEP 3. 작은 파일 적재 (users, cards) — Colab 전처리 후 콘솔 업로드 (15분)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-4-큰-거래-파일-적재--gcs-경유-15분" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STEP 4. 큰 거래 파일 적재 — GCS 경유 (15분)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-5-적재-검증-5분" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STEP 5. 적재 검증 (5분)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-6-비용과-정리-메모" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STEP 6. 비용과 정리 메모
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#부록-cloud-shell에서-한-번에-로컬-다운로드-없이" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        부록. Cloud Shell에서 한 번에 (로컬 다운로드 없이)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#session-1-3-데이터-확인과-기초-집계-60분" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Session 1-3. 데이터 확인과 기초 집계 (60분)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Session 1-3. 데이터 확인과 기초 집계 (60분)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#적재된-테이블-확인-3종-세트-10분" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        적재된 테이블 확인 3종 세트 (10분)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#기초-sql-리프레셔--sqld와-같은-점-bigquery에서-달라지는-점-25분" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        기초 SQL 리프레셔 — SQLD와 같은 점, BigQuery에서 달라지는 점 (25분)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#실습-카드사-신입-분석가의-첫-데이터-훑어보기-20분" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        실습: 카드사 신입 분석가의 첫 데이터 훑어보기 (20분)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#오늘의-마무리-5분" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        오늘의 마무리 (5분)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="day2-lecture.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Day 2 — 금융 데이터 분석 직무와 실습 데이터
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--draft-v0.2"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="day3-lecture.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Day 3 — 데이터 마트 설계와 구축
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--draft-v0.2"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="query-style-tips.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    쿼리 가독성을 높이는 팁
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--v0.1"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="query-execution-order.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    쿼리 작성 순서와 실행 순서
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--v0.1"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="bigquery-syntax.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BigQuery 주요 문법 정리
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--v0.1"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    8주차. 고급 SQL과 금융 데이터 분석
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    8주차. 고급 SQL과 금융 데이터 분석
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../week8/day1-lecture.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Day 1 — 비즈니스 질문을 SQL로 (고급 쿼리 패턴)
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--draft-v0.1"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../week8/day1-worksheet.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Day 1 사전 워크시트 — 윈도우 프레임 손풀기
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--draft-v0.1"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../week8/day2-lecture.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Day 2 — SQL로 하는 금융 데이터 분석
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--draft-v0.1"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../week8/day3-lecture.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Day 3 — DART에서 BigQuery로, 재무분석 파이프라인
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--draft-v0.1"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../week8/summary.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7·8주차 핵심 정리
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--draft-v0.1"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="목차">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      목차
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#오늘의-구성" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        오늘의 구성
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#session-1-1-bigquery-소개-50분" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Session 1-1. BigQuery 소개 (50분)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Session 1-1. BigQuery 소개 (50분)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#도입-우리는-지금-어디에-있나-10분" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        도입: 우리는 지금 어디에 있나 (10분)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#왜-실무는-클라우드-dw를-쓰는가-10분" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        왜 실무는 클라우드 DW를 쓰는가 (10분)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#핵심-개념-세-가지-15분" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        핵심 개념 세 가지 (15분)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gcp-콘솔과-bigquery-studio-화면-구성-10분" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GCP 콘솔과 BigQuery Studio 화면 구성 (10분)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#무료-한도와-비용-안전장치-5분" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        무료 한도와 비용 안전장치 (5분)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#session-1-2-데이터-적재--tabformer를-내-bigquery에-올리기-60분" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Session 1-2. 데이터 적재 — TabFormer를 내 BigQuery에 올리기 (60분)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Session 1-2. 데이터 적재 — TabFormer를 내 BigQuery에 올리기 (60분)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#사전-준비물" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        사전 준비물
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-0-이-실습의-큰-그림-5분" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STEP 0. 이 실습의 큰 그림 (5분)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-1-kaggle에서-데이터-받기-10분" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STEP 1. Kaggle에서 데이터 받기 (10분)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-2-gcp-프로젝트와-bigquery-준비-10분" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STEP 2. GCP 프로젝트와 BigQuery 준비 (10분)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-3-작은-파일-적재-users-cards--colab-전처리-후-콘솔-업로드-15분" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STEP 3. 작은 파일 적재 (users, cards) — Colab 전처리 후 콘솔 업로드 (15분)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-4-큰-거래-파일-적재--gcs-경유-15분" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STEP 4. 큰 거래 파일 적재 — GCS 경유 (15분)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-5-적재-검증-5분" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STEP 5. 적재 검증 (5분)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-6-비용과-정리-메모" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STEP 6. 비용과 정리 메모
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#부록-cloud-shell에서-한-번에-로컬-다운로드-없이" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        부록. Cloud Shell에서 한 번에 (로컬 다운로드 없이)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#session-1-3-데이터-확인과-기초-집계-60분" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Session 1-3. 데이터 확인과 기초 집계 (60분)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Session 1-3. 데이터 확인과 기초 집계 (60분)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#적재된-테이블-확인-3종-세트-10분" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        적재된 테이블 확인 3종 세트 (10분)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#기초-sql-리프레셔--sqld와-같은-점-bigquery에서-달라지는-점-25분" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        기초 SQL 리프레셔 — SQLD와 같은 점, BigQuery에서 달라지는 점 (25분)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#실습-카드사-신입-분석가의-첫-데이터-훑어보기-20분" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        실습: 카드사 신입 분석가의 첫 데이터 훑어보기 (20분)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#오늘의-마무리-5분" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        오늘의 마무리 (5분)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+    <a href="https://github.com/Eunjung-Cho/finda-week7-8/edit/main/docs/week7/day1-lecture.md" title="이 페이지를 편집" class="md-content__button md-icon" rel="edit">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
+    </a>
+  
+  
+
+
+<h1 id="finda-7주차-1일차--bigquery-입문-데이터-적재-기초-쿼리">FinDA 7주차 1일차 — BigQuery 입문, 데이터 적재, 기초 쿼리<a class="headerlink" href="#finda-7주차-1일차--bigquery-입문-데이터-적재-기초-쿼리" title="이 위치로 링크">&para;</a></h1>
+<blockquote>
+<p>7주차 Day 1 (금, 3시간) 강의안. BigQuery를 처음 만나는 수강생이 클라우드 DW의 개념을 이해하고, TabFormer 카드 거래 데이터를 본인 프로젝트에 직접 적재한 뒤, 기초 집계 쿼리까지 실행하는 것이 목표입니다.</p>
+</blockquote>
+<hr />
+<h2 id="오늘의-구성">오늘의 구성<a class="headerlink" href="#오늘의-구성" title="이 위치로 링크">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>순서</th>
+<th>세션</th>
+<th>시간</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>(1)</td>
+<td>Session 1-1. BigQuery 소개 — 왜 실무는 클라우드 DW를 쓰는가</td>
+<td>50분</td>
+</tr>
+<tr>
+<td>(2)</td>
+<td>쉬는 시간</td>
+<td>10분</td>
+</tr>
+<tr>
+<td>(3)</td>
+<td>Session 1-2. 데이터 적재 — TabFormer를 내 BigQuery에 올리기</td>
+<td>50분</td>
+</tr>
+<tr>
+<td>(4)</td>
+<td>쉬는 시간</td>
+<td>10분</td>
+</tr>
+<tr>
+<td>(5)</td>
+<td>Session 1-3. 데이터 확인과 기초 집계</td>
+<td>60분</td>
+</tr>
+</tbody>
+</table>
+<p>오늘의 학습 목표:</p>
+<ul>
+<li>(1) 로컬 DB와 클라우드 DW의 차이를 설명할 수 있다 (서버리스, 컬럼 지향 저장, 처리 바이트 과금)</li>
+<li>(2) Kaggle의 TabFormer 데이터를 본인 GCP 프로젝트의 BigQuery에 적재할 수 있다</li>
+<li>(3) 적재된 테이블을 확인하고, 기초 집계 쿼리로 비즈니스 질문에 답할 수 있다</li>
+</ul>
+<hr />
+<h2 id="session-1-1-bigquery-소개-50분">Session 1-1. BigQuery 소개 (50분)<a class="headerlink" href="#session-1-1-bigquery-소개-50분" title="이 위치로 링크">&para;</a></h2>
+<h3 id="도입-우리는-지금-어디에-있나-10분">도입: 우리는 지금 어디에 있나 (10분)<a class="headerlink" href="#도입-우리는-지금-어디에-있나-10분" title="이 위치로 링크">&para;</a></h3>
+<p>사전 설문 결과를 공유드리면,</p>
+<ul>
+<li>SQL 자체는 과반이 SQLD 자격증 또는 전공 수업 수준으로 이미 알고 있습니다. 사전 설문 응답자 9명 기준으로 기본 SELECT는 8명, GROUP BY 집계는 7명이 직접 작성할 수 있다고 답했습니다.</li>
+<li>반면 BigQuery는 실질 사용 경험자가 사실상 없고, GCP 콘솔을 써 본 사람은 0명입니다.</li>
+</ul>
+<p>그래서 이번 주의 약속은 이렇습니다. <strong>SQL 문법을 처음부터 다시 가르치지 않습니다.</strong> 대신 여러분이 이미 아는 SQL을 "실무가 실제로 쓰는 환경(클라우드 데이터 웨어하우스)"에서 다시 굴려 보고, 그 환경에서만 생기는 감각(비용, 규모, 협업)을 익힙니다.</p>
+<p>이번 주 결과물 미리보기:</p>
+<ul>
+<li>(1) 오늘 (1일차): 약 2,400만 행 카드 거래 데이터를 본인 BigQuery 프로젝트에 적재하고 기초 집계까지 실행</li>
+<li>(2) 2일차: 금융 데이터 분석 직무의 실제 모습과 실습 데이터 3개 테이블 심층 이해 → <a href="day2-lecture.html">Day 2 강의안</a></li>
+<li>(3) 3일차: 분석하기 좋은 형태로 데이터를 재조립하는 "데이터 마트" 설계와 구축 → <a href="day3-lecture.html">Day 3 강의안</a></li>
+</ul>
+<h3 id="왜-실무는-클라우드-dw를-쓰는가-10분">왜 실무는 클라우드 DW를 쓰는가 (10분)<a class="headerlink" href="#왜-실무는-클라우드-dw를-쓰는가-10분" title="이 위치로 링크">&para;</a></h3>
+<p>질문으로 시작합니다. "오늘 받을 거래 데이터는 CSV로 약 2.4GB, 약 2,400만 행입니다. 엑셀로 열면 어떻게 될까요?"</p>
+<ul>
+<li>엑셀은 시트당 약 104만 행이 한계입니다. 열리지도 않습니다.</li>
+<li>"그럼 노트북에 MySQL을 깔고 넣으면 되지 않나요?" — 됩니다. 하지만 실무에서는 다음 세 가지 벽에 부딪힙니다.</li>
+</ul>
+<p>로컬 DB의 세 가지 한계:</p>
+<ul>
+<li>(1) <strong>데이터 크기</strong>: 오늘 데이터는 2.4GB지만, 실제 카드사의 거래 로그는 수십억 행 그리고 수 TB 단위입니다. 노트북의 디스크와 메모리로는 감당이 안 됩니다.</li>
+<li>(2) <strong>협업</strong>: 우리 기수 40명이 같은 데이터를 분석한다고 각자 PC에 CSV를 복사하면, 누구 데이터가 최신인지 아무도 모르는 "버전 지옥"이 됩니다. 실무 팀도 마찬가지입니다.</li>
+<li>(3) <strong>관리</strong>: DB 서버는 설치, 백업, 장애 대응, 용량 증설을 누군가 계속 해야 합니다. 분석가가 그 일까지 하면 분석할 시간이 없습니다.</li>
+</ul>
+<p>그래서 실무의 답은 "데이터를 한 곳(클라우드 DW)에 두고, 모두가 쿼리로 접근한다"입니다. 전체 데이터 흐름에서 BigQuery가 어디에 있는지 봅시다.</p>
+<pre class="mermaid"><code>flowchart LR
+    A["수집&lt;br/&gt;(API, 로그, CSV)"] --&gt; B["운영 DB (OLTP)&lt;br/&gt;MySQL, PostgreSQL 등"]
+    B --&gt; C["클라우드 DW (분석)&lt;br/&gt;BigQuery"]
+    C --&gt; D["BI 도구와 리포트&lt;br/&gt;대시보드"]
+    D --&gt; E["의사결정"]</code></pre>
+<ul>
+<li>여러분이 지금까지 배운 SQL 환경(MySQL 등)은 주로 B의 세계, 즉 서비스를 "돌리기 위한" 데이터베이스입니다.</li>
+<li>이번 주 우리가 들어가는 곳은 C, 즉 데이터를 "분석하기 위한" 창고입니다. 같은 SQL을 쓰지만 목적과 설계가 다릅니다. 이 차이가 오늘 배울 세 가지 핵심 개념으로 이어집니다.</li>
+</ul>
+<h3 id="핵심-개념-세-가지-15분">핵심 개념 세 가지 (15분)<a class="headerlink" href="#핵심-개념-세-가지-15분" title="이 위치로 링크">&para;</a></h3>
+<h4 id="1-서버리스--발전기-대신-콘센트">(1) 서버리스 — 발전기 대신 콘센트<a class="headerlink" href="#1-서버리스--발전기-대신-콘센트" title="이 위치로 링크">&para;</a></h4>
+<p>전기가 필요하다고 발전기를 사서 직접 돌리는 집은 없습니다. 콘센트에 꽂고, 쓴 만큼 요금을 냅니다.</p>
+<ul>
+<li>발전기 방식 = 직접 DB 서버 구축: 서버 사양 선정, 설치, 백업, 장애 대응, 확장을 모두 우리가 담당</li>
+<li>콘센트 방식 = BigQuery(서버리스): 그 모든 것을 구글이 담당하고, 우리는 쿼리만 작성</li>
+</ul>
+<p>"서버리스(serverless)"는 서버가 없다는 뜻이 아니라, <strong>서버 관리를 우리가 신경 쓸 필요가 없다</strong>는 뜻입니다. 쿼리를 던지면 구글의 수많은 서버가 알아서 나눠 처리하고 결과만 돌려줍니다.</p>
+<h4 id="2-컬럼-지향-저장--데이터를-세로로-자른다">(2) 컬럼 지향 저장 — 데이터를 세로로 자른다<a class="headerlink" href="#2-컬럼-지향-저장--데이터를-세로로-자른다" title="이 위치로 링크">&para;</a></h4>
+<p>전통적인 운영 DB는 데이터를 "행 단위"로 저장합니다. 분석용 DW는 "컬럼 단위"로 저장합니다.</p>
+<table>
+<thead>
+<tr>
+<th>저장 방식</th>
+<th>저장 형태 (개념)</th>
+<th>잘하는 일</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>행 지향 (MySQL 등)</td>
+<td>(1, 김OO, 170cm), (2, 이OO, 165cm), ... 한 사람의 정보가 한 덩어리</td>
+<td>"3번 회원 정보 조회 또는 수정" 같은 건별 처리</td>
+</tr>
+<tr>
+<td>컬럼 지향 (BigQuery)</td>
+<td>(1, 2, 3, ...), (김OO, 이OO, ...), (170, 165, ...) 같은 컬럼끼리 한 덩어리</td>
+<td>"전교생 평균 키" 같은 대량 집계</td>
+</tr>
+</tbody>
+</table>
+<p>비유: 전교생 명부에서 "평균 키"를 구한다고 합시다. 학생별 카드를 한 장씩 넘기며 키를 찾는 것(행 지향)보다, "키만 모아 둔 목록" 한 장을 쭉 읽는 것(컬럼 지향)이 압도적으로 빠릅니다. 분석 쿼리는 대부분 "소수의 컬럼을 전체 행에 대해 집계"하는 형태라, 컬럼 지향이 유리합니다.</p>
+<p>그리고 이 저장 방식이 곧 비용 모델과 직결됩니다. <strong>BigQuery는 쿼리가 읽은(스캔한) 컬럼의 데이터만 처리합니다.</strong></p>
+<h4 id="3-처리-바이트-과금--담은-만큼-계산하는-샐러드바">(3) 처리 바이트 과금 — 담은 만큼 계산하는 샐러드바<a class="headerlink" href="#3-처리-바이트-과금--담은-만큼-계산하는-샐러드바" title="이 위치로 링크">&para;</a></h4>
+<p>BigQuery의 쿼리 요금은 "쿼리가 스캔한 데이터 양(처리 바이트)"으로 매겨집니다. 무게 단위로 계산하는 샐러드바와 같습니다.</p>
+<ul>
+<li><code>SELECT *</code> = 접시에 모든 메뉴를 다 담는 것. 필요 없는 컬럼까지 전부 스캔되어 처리 바이트가 커집니다.</li>
+<li>필요한 컬럼만 <code>SELECT</code> = 먹을 만큼만 담는 것. 스캔량과 비용이 줄어듭니다.</li>
+<li><strong><code>LIMIT 10</code>을 붙여도 스캔량은 줄지 않습니다.</strong> 결과 화면에 10행만 보여줄 뿐, 스캔은 이미 끝난 뒤입니다.</li>
+</ul>
+<h3 id="gcp-콘솔과-bigquery-studio-화면-구성-10분">GCP 콘솔과 BigQuery Studio 화면 구성 (10분)<a class="headerlink" href="#gcp-콘솔과-bigquery-studio-화면-구성-10분" title="이 위치로 링크">&para;</a></h3>
+<p>강사 화면을 함께 보며 구조를 익힙니다. 직접 조작은 Session 1-2에서 합니다.</p>
+<ul>
+<li>(1) <strong>GCP 콘솔</strong> (console.cloud.google.com): 구글 클라우드의 관문. 모든 리소스는 "프로젝트"라는 지붕 아래에 속합니다. 상단 바에서 현재 프로젝트를 항상 확인하세요.</li>
+<li>(2) <strong>BigQuery Studio</strong>: 콘솔 검색창에 "BigQuery"를 치면 진입합니다. 화면 구성은 세 부분입니다.<ul>
+<li>좌측 <strong>Explorer</strong>: 프로젝트 &gt; 데이터셋 &gt; 테이블의 트리 구조</li>
+<li>중앙 <strong>쿼리 편집기</strong>: SQL을 작성하고 실행하는 곳</li>
+<li>우측 상단 <strong>처리 바이트 미리보기</strong>: 쿼리를 실행하기 전에 "이 쿼리는 실행 시 N MB를 처리합니다"라고 알려주는 표시. <strong>오늘부터 모든 쿼리에서 실행 전에 이 숫자를 읽는 습관</strong>을 들입니다.</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>📷 스크린샷 추가 예정: (BigQuery Studio 첫 화면 — Explorer, 쿼리 편집기, 우측 상단 처리 바이트 미리보기 위치에 빨간 박스 표시)</p>
+<p>📷 스크린샷 추가 예정: (쿼리 실행 전 "이 쿼리를 실행하면 N MB가 처리됩니다" 미리보기 문구 확대 캡처)</p>
+</blockquote>
+<h3 id="무료-한도와-비용-안전장치-5분">무료 한도와 비용 안전장치 (5분)<a class="headerlink" href="#무료-한도와-비용-안전장치-5분" title="이 위치로 링크">&para;</a></h3>
+<p>"클라우드 = 요금 폭탄"이라는 걱정부터 내려놓읍시다. 학습용으로는 무료 한도가 넉넉합니다.</p>
+<ul>
+<li>(1) <strong>무료 한도</strong>: 매월 쿼리 처리 1TB 그리고 저장 10GB 수준이 무료입니다. 오늘 데이터(약 2.4GB)는 전체를 스캔해도 무료 한도의 0.25% 수준입니다.</li>
+<li>(2) <strong>샌드박스와 무료 크레딧</strong>: 신용카드 등록 없이 BigQuery 샌드박스로 시작할 수 있습니다 (테이블 60일 만료 등 일부 제한). 신규 가입 시 $300 무료 크레딧 안내가 뜨기도 합니다.</li>
+<li>(3) <strong>처리 바이트 미리보기 습관</strong>: 실행 버튼을 누르기 전에 우측 상단 숫자를 읽습니다. 실무에서 잘못 짠 쿼리 하나가 수백 달러를 태우는 사고는 이 습관 하나로 대부분 예방됩니다.</li>
+<li>(4) <strong>최대 청구 바이트 설정</strong>: 쿼리 설정의 고급 옵션에서 "Maximum bytes billed"를 걸어 두면, 그 이상 스캔하는 쿼리는 실행 자체가 거부됩니다. 안전벨트로 기억해 두세요.</li>
+</ul>
+<blockquote>
+<p>무료 한도와 요금 정책은 바뀔 수 있으니 <a href="https://cloud.google.com/bigquery/pricing">BigQuery 요금 문서</a>에서 최신 내용을 확인하세요.</p>
+</blockquote>
+<hr />
+<h2 id="session-1-2-데이터-적재--tabformer를-내-bigquery에-올리기-60분">Session 1-2. 데이터 적재 — TabFormer를 내 BigQuery에 올리기 (60분)<a class="headerlink" href="#session-1-2-데이터-적재--tabformer를-내-bigquery에-올리기-60분" title="이 위치로 링크">&para;</a></h2>
+<h3 id="사전-준비물">사전 준비물<a class="headerlink" href="#사전-준비물" title="이 위치로 링크">&para;</a></h3>
+<ul>
+<li>(1) Google 계정 (GCP 콘솔 로그인용)</li>
+<li>(2) Kaggle 계정 (구글 계정으로 가입 가능)</li>
+<li>(3) Google Colab 접속 가능 여부 확인 (users 파일 전처리에 사용)</li>
+</ul>
+<h3 id="step-0-이-실습의-큰-그림-5분">STEP 0. 이 실습의 큰 그림 (5분)<a class="headerlink" href="#step-0-이-실습의-큰-그림-5분" title="이 위치로 링크">&para;</a></h3>
+<pre class="mermaid"><code>flowchart TD
+    A["Kaggle 다운로드"] --&gt; B{"파일 크기"}
+    B --&gt;|"작은 파일 (users, cards)"| P["Colab 전처리&lt;br/&gt;users에 user_id 부여"]
+    P --&gt; C["BigQuery 콘솔 직접 업로드"]
+    B --&gt;|"큰 파일 약 2.4GB"| D["GCS 버킷 업로드"]
+    D --&gt; E["GCS에서 BigQuery로 로드"]
+    C --&gt; F[("BigQuery 테이블")]
+    E --&gt; F
+    F --&gt; G["적재 검증"]</code></pre>
+<p>경로를 나누는 이유: 거래 파일(<code>card_transaction.v1.csv</code>)이 약 2.4GB인데, BigQuery 콘솔에서 로컬 파일을 직접 올리는 방식은 작은 파일용입니다 (직접 업로드 한도가 약 10MB 수준). 그래서 거래 파일은 이 경로로는 불가능하고, Google Cloud Storage(GCS)라는 클라우드 저장소에 먼저 올린 뒤 거기서 BigQuery로 로드합니다.</p>
+<p>그리고 작은 파일 중 <code>users</code>는 적재 전에 <strong>반드시 전처리가 필요</strong>합니다 (STEP 3에서 상세히).</p>
+<h3 id="step-1-kaggle에서-데이터-받기-10분">STEP 1. Kaggle에서 데이터 받기 (10분)<a class="headerlink" href="#step-1-kaggle에서-데이터-받기-10분" title="이 위치로 링크">&para;</a></h3>
+<p>데이터셋: <a href="https://www.kaggle.com/datasets/ealtman2019/credit-card-transactions">Credit Card Transactions (ealtman2019)</a></p>
+<p>두 가지 방법 중 편한 쪽을 고르면 됩니다.</p>
+<h4 id="방법-1-a-웹에서-직접-받기-가장-간단">방법 1-A. 웹에서 직접 받기 (가장 간단)<a class="headerlink" href="#방법-1-a-웹에서-직접-받기-가장-간단" title="이 위치로 링크">&para;</a></h4>
+<ul>
+<li>(1) 위 링크 접속 후 Kaggle 로그인</li>
+<li>(2) 페이지의 Download 버튼 클릭 → 전체 파일이 하나의 zip으로 다운로드</li>
+<li>(3) zip 압축 해제</li>
+</ul>
+<p><img alt="스크린샷" src="../assets/images/pasted-image-20260708222246.png" /></p>
+<p><img alt="스크린샷" src="../assets/images/pasted-image-20260708222259.png" /></p>
+<h4 id="방법-1-b-kaggle-api로-받기-권장-엔지니어링-연습과-재현성">방법 1-B. Kaggle API로 받기 (권장: 엔지니어링 연습과 재현성)<a class="headerlink" href="#방법-1-b-kaggle-api로-받기-권장-엔지니어링-연습과-재현성" title="이 위치로 링크">&para;</a></h4>
+<ul>
+<li>(1) 터미널 또는 Cloud Shell에서 설치
+  <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>pip<span class="w"> </span>install<span class="w"> </span>kaggle
+</span></code></pre></div></li>
+<li>(2) Kaggle API 토큰 발급: Kaggle 우측 상단 프로필 → Settings → API → "Create New Token" → <code>kaggle.json</code> 파일이 다운로드됨</li>
+<li>(3) 토큰 배치
+  <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>mkdir<span class="w"> </span>-p<span class="w"> </span>~/.kaggle
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>mv<span class="w"> </span>kaggle.json<span class="w"> </span>~/.kaggle/
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>chmod<span class="w"> </span><span class="m">600</span><span class="w"> </span>~/.kaggle/kaggle.json
+</span></code></pre></div></li>
+<li>(4) 데이터 다운로드와 압축 해제
+  <div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>kaggle<span class="w"> </span>datasets<span class="w"> </span>download<span class="w"> </span>-d<span class="w"> </span>ealtman2019/credit-card-transactions
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>unzip<span class="w"> </span>credit-card-transactions.zip<span class="w"> </span>-d<span class="w"> </span>tabformer
+</span></code></pre></div></li>
+</ul>
+<h4 id="받은-파일-확인">받은 파일 확인<a class="headerlink" href="#받은-파일-확인" title="이 위치로 링크">&para;</a></h4>
+<p>압축을 풀면 대략 다음 파일들이 보입니다.</p>
+<table>
+<thead>
+<tr>
+<th>파일</th>
+<th>내용</th>
+<th>대략 크기</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>sd254_users.csv</code></td>
+<td>사용자 약 2,000명</td>
+<td>작음 (수백 KB)</td>
+</tr>
+<tr>
+<td><code>sd254_cards.csv</code></td>
+<td>카드 정보</td>
+<td>작음 (수백 KB)</td>
+</tr>
+<tr>
+<td><code>card_transaction.v1.csv</code></td>
+<td>거래 약 2,400만 건</td>
+<td>큼 (약 2.4GB)</td>
+</tr>
+<tr>
+<td><code>mcc_codes.json</code></td>
+<td>MCC 업종 코드 매핑</td>
+<td>작음</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>파일 구성은 데이터셋 버전에 따라 다를 수 있으니, 압축 해제 후 실제 목록을 확인하세요. <code>mcc_codes.json</code>은 업종 코드 매핑인데 일반 JSON 객체 형태라 BigQuery에 바로 적재하기 어렵습니다 (BigQuery는 줄 단위 JSON을 요구). 이 파일은 2일차 데이터 상세 소개에서 별도 룩업 테이블로 다룹니다 → <a href="day2-lecture.html">Day 2 강의안</a></p>
+</blockquote>
+<h3 id="step-2-gcp-프로젝트와-bigquery-준비-10분">STEP 2. GCP 프로젝트와 BigQuery 준비 (10분)<a class="headerlink" href="#step-2-gcp-프로젝트와-bigquery-준비-10분" title="이 위치로 링크">&para;</a></h3>
+<h4 id="2-1-프로젝트-만들기">2-1. 프로젝트 만들기<a class="headerlink" href="#2-1-프로젝트-만들기" title="이 위치로 링크">&para;</a></h4>
+<ul>
+<li>(1) <a href="https://console.cloud.google.com">console.cloud.google.com</a> 접속 (Google 계정 로그인)</li>
+<li>(2) 상단 프로젝트 선택 → "새 프로젝트" → 이름 입력 (예: <code>finda-week7</code>) → 만들기</li>
+<li>(3) 처음이라면 신규 사용자 대상 무료 크레딧($300) 안내가 뜹니다</li>
+</ul>
+<p><img alt="스크린샷" src="../assets/images/pasted-image-20260708232838.png" /></p>
+<h4 id="2-2-bigquery-들어가기">2-2. BigQuery 들어가기<a class="headerlink" href="#2-2-bigquery-들어가기" title="이 위치로 링크">&para;</a></h4>
+<ul>
+<li>(1) 콘솔 좌측 메뉴 또는 검색창에서 "BigQuery" 검색 → BigQuery Studio 진입</li>
+<li>(2) 좌측 Explorer 패널에 본인 프로젝트가 보이는지 확인</li>
+</ul>
+<p>비용이 걱정된다면 Session 1-1의 무료 한도 내용을 떠올리세요. 우리 데이터는 무료 한도 안에 충분히 들어옵니다.</p>
+<h4 id="2-3-데이터셋dataset-만들기">2-3. 데이터셋(dataset) 만들기<a class="headerlink" href="#2-3-데이터셋dataset-만들기" title="이 위치로 링크">&para;</a></h4>
+<p>BigQuery에서 "데이터셋"은 테이블을 담는 폴더 같은 개념입니다.</p>
+<ul>
+<li>(1) Explorer에서 프로젝트 옆 점 세 개 → "데이터셋 만들기"</li>
+<li>(2) 데이터셋 ID: <code>tabformer</code></li>
+<li>(3) 위치(Location): 예) <code>US</code> 또는 <code>asia-northeast3</code>(서울)</li>
+</ul>
+<blockquote>
+<p>⚠️ <strong>위치 주의</strong>: 데이터셋 위치와 STEP 4에서 만들 GCS 버킷 위치를 똑같이 맞추세요. 다르면 GCS에서 BigQuery로 로드가 안 됩니다.</p>
+</blockquote>
+<h3 id="step-3-작은-파일-적재-users-cards--colab-전처리-후-콘솔-업로드-15분">STEP 3. 작은 파일 적재 (users, cards) — Colab 전처리 후 콘솔 업로드 (15분)<a class="headerlink" href="#step-3-작은-파일-적재-users-cards--colab-전처리-후-콘솔-업로드-15분" title="이 위치로 링크">&para;</a></h3>
+<h4 id="3-1-users의-유명한-함정-조인-키가-없다">3-1. users의 유명한 함정: 조인 키가 없다<a class="headerlink" href="#3-1-users의-유명한-함정-조인-키가-없다" title="이 위치로 링크">&para;</a></h4>
+<blockquote>
+<p>⚠️ <strong>적재 전에 반드시 읽으세요.</strong> <code>sd254_users.csv</code>에는 조인 키 컬럼이 없습니다. transactions의 <code>user_id</code> 그리고 cards의 <code>user</code>는 users 파일의 <strong>행 번호(0부터 시작)</strong>를 가리킵니다. 그런데 BigQuery는 테이블의 행 순서를 보존한다는 보장이 없어서, 이대로 적재하면 나중에 어떤 행이 몇 번 사용자였는지 복원할 방법이 없습니다. 따라서 <strong>적재 전에 pandas로 <code>user_id</code> 컬럼을 만들어 붙여야 합니다.</strong> 이 함정은 이 데이터셋을 쓰는 실무자들 사이에서도 유명합니다.</p>
+</blockquote>
+<h4 id="3-2-colab에서-전처리하기">3-2. Colab에서 전처리하기<a class="headerlink" href="#3-2-colab에서-전처리하기" title="이 위치로 링크">&para;</a></h4>
+<p>Google Colab 새 노트북을 열고, 좌측 파일 패널에 <code>sd254_users.csv</code>와 <code>sd254_cards.csv</code>를 업로드한 뒤 아래 셀을 실행합니다. 내친김에 컬럼명도 소문자와 밑줄로 표준화합니다 (원본 헤더에 공백과 특수문자가 섞여 있어, 그대로 두면 BigQuery가 임의로 바꿔 버립니다).</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># Google Colab에서 실행</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="k">def</span><span class="w"> </span><span class="nf">clean</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>    <span class="c1"># 컬럼명 표준화 예: 'Yearly Income - Person' -&gt; 'yearly_income_person'</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>    <span class="k">return</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">'[^0-9a-z]+'</span><span class="p">,</span> <span class="s1">'_'</span><span class="p">,</span> <span class="n">name</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">'_'</span><span class="p">)</span>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="c1"># (1) users: 컬럼명 정리 + 행 순서(0부터)를 user_id로 부여</span>
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="n">users</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">'sd254_users.csv'</span><span class="p">)</span>
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="n">users</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">clean</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">users</span><span class="o">.</span><span class="n">columns</span><span class="p">]</span>
+</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="n">users</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">'user_id'</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">users</span><span class="p">)))</span>
+</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a><span class="n">users</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s1">'users_with_id.csv'</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</span><span id="__span-3-14"><a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a>
+</span><span id="__span-3-15"><a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a><span class="c1"># (2) cards: 컬럼명만 정리 ('User' -&gt; 'user', 'CARD INDEX' -&gt; 'card_index')</span>
+</span><span id="__span-3-16"><a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a><span class="n">cards</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">'sd254_cards.csv'</span><span class="p">)</span>
+</span><span id="__span-3-17"><a id="__codelineno-3-17" name="__codelineno-3-17" href="#__codelineno-3-17"></a><span class="n">cards</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">clean</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">cards</span><span class="o">.</span><span class="n">columns</span><span class="p">]</span>
+</span><span id="__span-3-18"><a id="__codelineno-3-18" name="__codelineno-3-18" href="#__codelineno-3-18"></a><span class="n">cards</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s1">'cards_clean.csv'</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</span><span id="__span-3-19"><a id="__codelineno-3-19" name="__codelineno-3-19" href="#__codelineno-3-19"></a>
+</span><span id="__span-3-20"><a id="__codelineno-3-20" name="__codelineno-3-20" href="#__codelineno-3-20"></a><span class="nb">print</span><span class="p">(</span><span class="n">users</span><span class="p">[[</span><span class="s1">'user_id'</span><span class="p">]]</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
+</span><span id="__span-3-21"><a id="__codelineno-3-21" name="__codelineno-3-21" href="#__codelineno-3-21"></a><span class="nb">print</span><span class="p">(</span><span class="n">cards</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+</span></code></pre></div>
+<p>실행 후 좌측 파일 패널에서 <code>users_with_id.csv</code>와 <code>cards_clean.csv</code>를 다운로드합니다.</p>
+<ul>
+<li>참고: users의 소득과 부채 컬럼도 거래 금액처럼 <code>$</code> 기호가 붙은 문자열입니다. 오늘은 그대로 두고, 정제 방법은 오늘 Session 1-3에서 배웁니다.</li>
+</ul>
+<h4 id="3-3-콘솔에서-업로드">3-3. 콘솔에서 업로드<a class="headerlink" href="#3-3-콘솔에서-업로드" title="이 위치로 링크">&para;</a></h4>
+<p>작은 파일은 GCS 없이 콘솔에서 바로 올립니다.</p>
+<ul>
+<li>(1) Explorer에서 <code>tabformer</code> 데이터셋 클릭 → "테이블 만들기"</li>
+<li>(2) "테이블을 만들 소스" → <strong>업로드(Upload)</strong> 선택</li>
+<li>(3) 파일 찾아보기 → <code>users_with_id.csv</code> 선택, 파일 형식 CSV</li>
+<li>(4) 대상 테이블 이름: <code>users</code></li>
+<li>(5) 스키마: <strong>자동 감지(auto-detect)</strong> 체크</li>
+<li>(6) 테이블 만들기</li>
+</ul>
+<p><code>cards_clean.csv</code>도 같은 방식으로 테이블 이름 <code>cards</code>로 반복합니다.</p>
+<blockquote>
+<p><strong>헤더 처리 규칙 (헷갈리기 쉬움)</strong>
+자동 감지를 쓰면 BigQuery가 헤더 행을 알아서 인식해 컬럼명을 만듭니다. 이때는 "헤더 건너뛰기"를 따로 설정하지 마세요 (헤더를 건너뛰면 컬럼명을 잃어버려 <code>string_field_0</code> 같은 이름이 됩니다). 반대로 STEP 4처럼 수동 스키마를 쓸 때는 헤더 1행을 건너뛰도록 지정해야 합니다.</p>
+</blockquote>
+<h3 id="step-4-큰-거래-파일-적재--gcs-경유-15분">STEP 4. 큰 거래 파일 적재 — GCS 경유 (15분)<a class="headerlink" href="#step-4-큰-거래-파일-적재--gcs-경유-15분" title="이 위치로 링크">&para;</a></h3>
+<p>오늘의 메인 이벤트입니다. 약 2.4GB 거래 파일을 GCS에 올린 뒤 BigQuery로 로드합니다.</p>
+<h4 id="4-1-gcs-버킷-만들기">4-1. GCS 버킷 만들기<a class="headerlink" href="#4-1-gcs-버킷-만들기" title="이 위치로 링크">&para;</a></h4>
+<ul>
+<li>(1) 콘솔 검색창 → "Cloud Storage" → 버킷 → "만들기"</li>
+<li>(2) 버킷 이름: 전 세계에서 유일해야 함 (예: <code>finda-week7-본인이니셜-2026</code>)</li>
+<li>(3) 위치: STEP 2-3의 데이터셋 위치와 동일하게 (예: <code>US</code> 또는 <code>asia-northeast3</code>)</li>
+<li>(4) 나머지는 기본값으로 만들기</li>
+</ul>
+<h4 id="4-2-거래-파일을-gcs에-올리기">4-2. 거래 파일을 GCS에 올리기<a class="headerlink" href="#4-2-거래-파일을-gcs에-올리기" title="이 위치로 링크">&para;</a></h4>
+<p>브라우저로 2.4GB를 올리면 느리고 끊기기 쉬워서, <strong>Cloud Shell</strong>에서 명령으로 올리는 걸 권장합니다.</p>
+<ul>
+<li>(1) 콘솔 우측 상단 터미널 아이콘 클릭 → Cloud Shell 열기 (<code>gcloud</code>, <code>bq</code>가 이미 설치되어 있음)</li>
+<li>(2) 거래 파일이 로컬에 있다면 Cloud Shell 상단 점 세 개 → "업로드"로 <code>card_transaction.v1.csv</code>를 올린 뒤 실행
+  <div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>gcloud<span class="w"> </span>storage<span class="w"> </span>cp<span class="w"> </span>card_transaction.v1.csv<span class="w"> </span>gs://YOUR_BUCKET/tabformer/
+</span></code></pre></div></li>
+</ul>
+<blockquote>
+<p>더 매끄러운 방법: STEP 1-B의 Kaggle API를 Cloud Shell 안에서 바로 실행하면, 로컬을 거치지 않고 Cloud Shell에서 GCS로 바로 올릴 수 있습니다 (부록 참고).</p>
+</blockquote>
+<h4 id="4-3-gcs에서-bigquery로-로드-수동-스키마">4-3. GCS에서 BigQuery로 로드 (수동 스키마)<a class="headerlink" href="#4-3-gcs에서-bigquery로-로드-수동-스키마" title="이 위치로 링크">&para;</a></h4>
+<p>거래 파일은 컬럼명과 타입을 깔끔하게 고정하기 위해 <strong>수동 스키마</strong>로 로드하길 권장합니다. Cloud Shell에서 실행합니다. (<code>YOUR_BUCKET</code>은 본인 버킷 이름으로 교체)</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>bq<span class="w"> </span>load<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">  </span>--source_format<span class="o">=</span>CSV<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">  </span>--skip_leading_rows<span class="o">=</span><span class="m">1</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">  </span>tabformer.transactions<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w">  </span>gs://YOUR_BUCKET/tabformer/card_transaction.v1.csv<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="w">  </span>user_id:INTEGER,card_id:INTEGER,year:INTEGER,month:INTEGER,day:INTEGER,time:STRING,amount:STRING,use_chip:STRING,merchant_name:STRING,merchant_city:STRING,merchant_state:STRING,zip:STRING,mcc:INTEGER,errors:STRING,is_fraud:STRING
+</span></code></pre></div>
+<p>스키마를 이렇게 잡은 이유 (수업에서 강조할 포인트):</p>
+<ul>
+<li>(1) <code>amount</code>를 STRING으로 받습니다. 원본이 <code>$54.30</code>처럼 <code>$</code>가 붙은 문자열이라 숫자로 바로 못 받습니다. 정제는 쿼리에서 합니다 (오늘 Session 1-3의 핵심 재료).</li>
+<li>(2) <code>time</code>도 STRING(<code>HH:MM</code> 형태)이고, 날짜는 year, month, day로 쪼개져 있어 정수로 받습니다. <strong>DATE 합성은 쿼리에서</strong> 합니다.</li>
+<li>(3) <code>zip</code>은 빈 값과 소수점 표기가 섞여 있어 STRING이 안전합니다.</li>
+</ul>
+<p>콘솔 UI로 하고 싶다면: 테이블 만들기 → 소스 "Google Cloud Storage" → GCS URI 입력 → 형식 CSV → 위 스키마를 직접 입력 → 헤더 1행 건너뛰기.</p>
+<h3 id="step-5-적재-검증-5분">STEP 5. 적재 검증 (5분)<a class="headerlink" href="#step-5-적재-검증-5분" title="이 위치로 링크">&para;</a></h3>
+<p>BigQuery 콘솔의 쿼리 편집기에서 실행합니다. (<code>finda-week7-505502</code>는 본인 프로젝트 ID로 교체)</p>
+<div class="language-sql highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1">-- 행 수 확인</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="k">SELECT</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">n_tx</span><span class="w">    </span><span class="k">FROM</span><span class="w"> </span><span class="o">`</span><span class="n">finda</span><span class="o">-</span><span class="n">week7</span><span class="o">-</span><span class="mi">505502</span><span class="p">.</span><span class="n">tabformer</span><span class="p">.</span><span class="n">transactions</span><span class="o">`</span><span class="p">;</span><span class="w">  </span><span class="c1">-- 약 2,400만</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="k">SELECT</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">n_users</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="o">`</span><span class="n">finda</span><span class="o">-</span><span class="n">week7</span><span class="o">-</span><span class="mi">505502</span><span class="p">.</span><span class="n">tabformer</span><span class="p">.</span><span class="n">users</span><span class="o">`</span><span class="p">;</span><span class="w">         </span><span class="c1">-- 약 2,000</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="k">SELECT</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">n_cards</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="o">`</span><span class="n">finda</span><span class="o">-</span><span class="n">week7</span><span class="o">-</span><span class="mi">505502</span><span class="p">.</span><span class="n">tabformer</span><span class="p">.</span><span class="n">cards</span><span class="o">`</span><span class="p">;</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="c1">-- users의 user_id가 잘 부여되었는지 확인 (0부터 시작, 사람 수 - 1에서 끝)</span>
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="k">SELECT</span>
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="w">    </span><span class="k">MIN</span><span class="p">(</span><span class="n">u</span><span class="p">.</span><span class="n">user_id</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">min_id</span><span class="p">,</span>
+</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="w">    </span><span class="k">MAX</span><span class="p">(</span><span class="n">u</span><span class="p">.</span><span class="n">user_id</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">max_id</span>
+</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a><span class="k">FROM</span>
+</span><span id="__span-6-11"><a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a><span class="w">    </span><span class="o">`</span><span class="n">finda</span><span class="o">-</span><span class="n">week7</span><span class="o">-</span><span class="mi">505502</span><span class="p">.</span><span class="n">tabformer</span><span class="p">.</span><span class="n">users</span><span class="o">`</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">u</span><span class="p">;</span>
+</span><span id="__span-6-12"><a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a>
+</span><span id="__span-6-13"><a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a><span class="c1">-- 미리보기</span>
+</span><span id="__span-6-14"><a id="__codelineno-6-14" name="__codelineno-6-14" href="#__codelineno-6-14"></a><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="o">`</span><span class="n">finda</span><span class="o">-</span><span class="n">week7</span><span class="o">-</span><span class="mi">505502</span><span class="p">.</span><span class="n">tabformer</span><span class="p">.</span><span class="n">transactions</span><span class="o">`</span><span class="w"> </span><span class="k">LIMIT</span><span class="w"> </span><span class="mi">10</span><span class="p">;</span>
+</span></code></pre></div>
+<p>체크포인트:</p>
+<ul>
+<li>(1) 거래 행 수가 약 2,400만이면 정상</li>
+<li>(2) users의 <code>min_id</code>가 0이면 정상 (0이 아니면 STEP 3의 전처리를 건너뛴 것)</li>
+<li>(3) <code>amount</code> 값에 <code>$</code>가 그대로 보이면 정상 (의도된 것, Session 1-3에서 정제)</li>
+<li>(4) 쿼리 실행 전 화면 우측 상단의 "이 쿼리를 실행하면 N 처리됨" 표시를 확인 → Session 1-1에서 배운 비용 감각을 실전에 적용하는 첫 순간</li>
+</ul>
+<h3 id="step-6-비용과-정리-메모">STEP 6. 비용과 정리 메모<a class="headerlink" href="#step-6-비용과-정리-메모" title="이 위치로 링크">&para;</a></h3>
+<ul>
+<li>무료 한도 안이지만 <code>SELECT *</code> 남발은 처리 바이트를 키웁니다. 필요한 컬럼만 SELECT하는 습관을 들이세요.</li>
+<li>실습이 끝나고 한동안 안 쓸 거면, GCS에 올린 거래 파일은 지워도 됩니다 (BigQuery 테이블만 남기면 됨). 저장 비용 절약.</li>
+</ul>
+<h3 id="부록-cloud-shell에서-한-번에-로컬-다운로드-없이">부록. Cloud Shell에서 한 번에 (로컬 다운로드 없이)<a class="headerlink" href="#부록-cloud-shell에서-한-번에-로컬-다운로드-없이" title="이 위치로 링크">&para;</a></h3>
+<p>로컬에 2.4GB를 받기 부담되면, Cloud Shell 안에서 전 과정을 끝낼 수 있습니다.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># 1) Kaggle 설치와 토큰 (kaggle.json을 Cloud Shell에 업로드해 둔 상태)</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>pip<span class="w"> </span>install<span class="w"> </span>kaggle
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>mkdir<span class="w"> </span>-p<span class="w"> </span>~/.kaggle<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>mv<span class="w"> </span>kaggle.json<span class="w"> </span>~/.kaggle/<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>chmod<span class="w"> </span><span class="m">600</span><span class="w"> </span>~/.kaggle/kaggle.json
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="c1"># 2) 데이터 다운로드와 압축 해제</span>
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>kaggle<span class="w"> </span>datasets<span class="w"> </span>download<span class="w"> </span>-d<span class="w"> </span>ealtman2019/credit-card-transactions
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>unzip<span class="w"> </span>credit-card-transactions.zip<span class="w"> </span>-d<span class="w"> </span>tabformer
+</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="nb">cd</span><span class="w"> </span>tabformer
+</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a>
+</span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a><span class="c1"># 3) 큰 파일을 GCS로</span>
+</span><span id="__span-7-11"><a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a>gcloud<span class="w"> </span>storage<span class="w"> </span>cp<span class="w"> </span>card_transaction.v1.csv<span class="w"> </span>gs://YOUR_BUCKET/tabformer/
+</span><span id="__span-7-12"><a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a>
+</span><span id="__span-7-13"><a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a><span class="c1"># 4) 큰 파일을 BigQuery로 로드 (STEP 4-3 스키마 그대로 사용)</span>
+</span><span id="__span-7-14"><a id="__codelineno-7-14" name="__codelineno-7-14" href="#__codelineno-7-14"></a>bq<span class="w"> </span>load<span class="w"> </span>--source_format<span class="o">=</span>CSV<span class="w"> </span>--skip_leading_rows<span class="o">=</span><span class="m">1</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-7-15"><a id="__codelineno-7-15" name="__codelineno-7-15" href="#__codelineno-7-15"></a><span class="w">  </span>tabformer.transactions<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-7-16"><a id="__codelineno-7-16" name="__codelineno-7-16" href="#__codelineno-7-16"></a><span class="w">  </span>gs://YOUR_BUCKET/tabformer/card_transaction.v1.csv<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-7-17"><a id="__codelineno-7-17" name="__codelineno-7-17" href="#__codelineno-7-17"></a><span class="w">  </span>user_id:INTEGER,card_id:INTEGER,year:INTEGER,month:INTEGER,day:INTEGER,time:STRING,amount:STRING,use_chip:STRING,merchant_name:STRING,merchant_city:STRING,merchant_state:STRING,zip:STRING,mcc:INTEGER,errors:STRING,is_fraud:STRING
+</span><span id="__span-7-18"><a id="__codelineno-7-18" name="__codelineno-7-18" href="#__codelineno-7-18"></a>
+</span><span id="__span-7-19"><a id="__codelineno-7-19" name="__codelineno-7-19" href="#__codelineno-7-19"></a><span class="c1"># 5) 작은 파일 전처리 (users에 user_id 부여 + 컬럼명 표준화) — Cloud Shell에는 python3가 설치되어 있음</span>
+</span><span id="__span-7-20"><a id="__codelineno-7-20" name="__codelineno-7-20" href="#__codelineno-7-20"></a>python3<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;'EOF'</span>
+</span><span id="__span-7-21"><a id="__codelineno-7-21" name="__codelineno-7-21" href="#__codelineno-7-21"></a><span class="s">import re</span>
+</span><span id="__span-7-22"><a id="__codelineno-7-22" name="__codelineno-7-22" href="#__codelineno-7-22"></a><span class="s">import pandas as pd</span>
+</span><span id="__span-7-23"><a id="__codelineno-7-23" name="__codelineno-7-23" href="#__codelineno-7-23"></a>
+</span><span id="__span-7-24"><a id="__codelineno-7-24" name="__codelineno-7-24" href="#__codelineno-7-24"></a><span class="s">def clean(name):</span>
+</span><span id="__span-7-25"><a id="__codelineno-7-25" name="__codelineno-7-25" href="#__codelineno-7-25"></a><span class="s">    return re.sub(r'[^0-9a-z]+', '_', name.strip().lower()).strip('_')</span>
+</span><span id="__span-7-26"><a id="__codelineno-7-26" name="__codelineno-7-26" href="#__codelineno-7-26"></a>
+</span><span id="__span-7-27"><a id="__codelineno-7-27" name="__codelineno-7-27" href="#__codelineno-7-27"></a><span class="s">users = pd.read_csv('sd254_users.csv')</span>
+</span><span id="__span-7-28"><a id="__codelineno-7-28" name="__codelineno-7-28" href="#__codelineno-7-28"></a><span class="s">users.columns = [clean(c) for c in users.columns]</span>
+</span><span id="__span-7-29"><a id="__codelineno-7-29" name="__codelineno-7-29" href="#__codelineno-7-29"></a><span class="s">users.insert(0, 'user_id', range(len(users)))</span>
+</span><span id="__span-7-30"><a id="__codelineno-7-30" name="__codelineno-7-30" href="#__codelineno-7-30"></a><span class="s">users.to_csv('users_with_id.csv', index=False)</span>
+</span><span id="__span-7-31"><a id="__codelineno-7-31" name="__codelineno-7-31" href="#__codelineno-7-31"></a>
+</span><span id="__span-7-32"><a id="__codelineno-7-32" name="__codelineno-7-32" href="#__codelineno-7-32"></a><span class="s">cards = pd.read_csv('sd254_cards.csv')</span>
+</span><span id="__span-7-33"><a id="__codelineno-7-33" name="__codelineno-7-33" href="#__codelineno-7-33"></a><span class="s">cards.columns = [clean(c) for c in cards.columns]</span>
+</span><span id="__span-7-34"><a id="__codelineno-7-34" name="__codelineno-7-34" href="#__codelineno-7-34"></a><span class="s">cards.to_csv('cards_clean.csv', index=False)</span>
+</span><span id="__span-7-35"><a id="__codelineno-7-35" name="__codelineno-7-35" href="#__codelineno-7-35"></a><span class="s">EOF</span>
+</span><span id="__span-7-36"><a id="__codelineno-7-36" name="__codelineno-7-36" href="#__codelineno-7-36"></a>
+</span><span id="__span-7-37"><a id="__codelineno-7-37" name="__codelineno-7-37" href="#__codelineno-7-37"></a><span class="c1"># 6) 작은 파일은 GCS 없이 자동 감지로 바로 로드 (헤더 건너뛰기 없이)</span>
+</span><span id="__span-7-38"><a id="__codelineno-7-38" name="__codelineno-7-38" href="#__codelineno-7-38"></a>bq<span class="w"> </span>load<span class="w"> </span>--autodetect<span class="w"> </span>--source_format<span class="o">=</span>CSV<span class="w"> </span>tabformer.users<span class="w"> </span>users_with_id.csv
+</span><span id="__span-7-39"><a id="__codelineno-7-39" name="__codelineno-7-39" href="#__codelineno-7-39"></a>bq<span class="w"> </span>load<span class="w"> </span>--autodetect<span class="w"> </span>--source_format<span class="o">=</span>CSV<span class="w"> </span>tabformer.cards<span class="w"> </span>cards_clean.csv
+</span></code></pre></div>
+<blockquote>
+<p>Cloud Shell 홈 디렉터리는 약 5GB라, 압축본(zip)과 압축 해제본이 동시에 있으면 빠듯할 수 있습니다. GCS 업로드 후 로컬 파일을 지우면서 진행하세요. pandas가 없다는 오류가 나면 <code>pip install pandas</code>를 먼저 실행하세요.</p>
+</blockquote>
+<hr />
+<h2 id="session-1-3-데이터-확인과-기초-집계-60분">Session 1-3. 데이터 확인과 기초 집계 (60분)<a class="headerlink" href="#session-1-3-데이터-확인과-기초-집계-60분" title="이 위치로 링크">&para;</a></h2>
+<h3 id="적재된-테이블-확인-3종-세트-10분">적재된 테이블 확인 3종 세트 (10분)<a class="headerlink" href="#적재된-테이블-확인-3종-세트-10분" title="이 위치로 링크">&para;</a></h3>
+<p>쿼리를 짜기 전에, Explorer에서 <code>transactions</code> 테이블을 클릭하면 나오는 세 개의 탭부터 익힙니다.</p>
+<ul>
+<li>(1) <strong>미리보기(Preview) 탭</strong>: 데이터를 눈으로 훑어봅니다. 중요한 점 — <strong>미리보기는 처리 바이트를 쓰지 않습니다 (무료)</strong>. "데이터가 어떻게 생겼나 보려고 <code>SELECT *</code>를 실행"하는 습관 대신, 미리보기 탭을 먼저 여세요.</li>
+<li>(2) <strong>스키마(Schema) 탭</strong>: 컬럼명과 타입을 확인합니다. <code>amount</code>가 STRING인 것, <code>is_fraud</code>가 STRING인 것을 여기서 눈으로 확인하세요.</li>
+<li>(3) <strong>세부정보(Details) 탭</strong>: 행 수, 테이블 크기(논리 바이트), 생성 시각, 위치를 확인합니다. "이 테이블 전체를 스캔하면 약 몇 GB겠구나"라는 감을 여기서 잡습니다.</li>
+</ul>
+<blockquote>
+<p>⚠️ <strong>이후 모든 쿼리 공통 캐비앗</strong>: TabFormer는 배포 버전에 따라 컬럼 구성이 조금씩 다를 수 있습니다. 이 강의안의 쿼리를 실행하기 전에, 반드시 본인 테이블의 <strong>Schema 탭에서 실제 컬럼명을 확인</strong>하고 다르면 맞춰 바꾸세요.</p>
+<p>📷 스크린샷 추가 예정: (transactions 테이블의 미리보기, 스키마, 세부정보 탭 위치 표시)</p>
+</blockquote>
+<h3 id="기초-sql-리프레셔--sqld와-같은-점-bigquery에서-달라지는-점-25분">기초 SQL 리프레셔 — SQLD와 같은 점, BigQuery에서 달라지는 점 (25분)<a class="headerlink" href="#기초-sql-리프레셔--sqld와-같은-점-bigquery에서-달라지는-점-25분" title="이 위치로 링크">&para;</a></h3>
+<p>여러분 대부분이 이미 아는 문법입니다. 그래서 각 문법마다 두 줄로 정리합니다: (a) SQLD에서 배운 것과 같은 점, (b) BigQuery에서 달라지는 점. 데모 쿼리는 강사와 함께 직접 실행합니다. (<code>finda-week7-505502</code>는 본인 프로젝트 ID로 교체)</p>
+<h4 id="1-select와-limit">(1) SELECT와 LIMIT<a class="headerlink" href="#1-select와-limit" title="이 위치로 링크">&para;</a></h4>
+<ul>
+<li>같은 점: 컬럼을 골라 조회하는 문법은 SQLD에서 배운 그대로입니다.</li>
+<li>달라지는 점: 테이블 이름을 <code>`프로젝트.데이터셋.테이블`</code> 형태의 풀네임으로 쓰고 <strong>백틱(<code>)**으로 감쌉니다 (작은따옴표 아님). 그리고</code>LIMIT`은 결과 행 수만 줄일 뿐 </strong>처리 바이트는 줄이지 않습니다** — 스캔량을 줄이는 것은 SELECT하는 컬럼 수입니다.</li>
+</ul>
+<div class="language-sql highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1">-- 데모 1: 세 컬럼만 조회 — 실행 전 우측 상단 처리 바이트를 먼저 읽으세요</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="k">SELECT</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="w">    </span><span class="n">t</span><span class="p">.</span><span class="n">user_id</span><span class="p">,</span>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="w">    </span><span class="n">t</span><span class="p">.</span><span class="n">merchant_name</span><span class="p">,</span>
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="w">    </span><span class="n">t</span><span class="p">.</span><span class="n">amount</span>
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="k">FROM</span>
+</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="w">    </span><span class="o">`</span><span class="n">finda</span><span class="o">-</span><span class="n">week7</span><span class="o">-</span><span class="mi">505502</span><span class="p">.</span><span class="n">tabformer</span><span class="p">.</span><span class="n">transactions</span><span class="o">`</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">t</span>
+</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="k">LIMIT</span><span class="w"> </span><span class="mi">10</span><span class="p">;</span>
+</span></code></pre></div>
+<p>실행 전후로 두 가지를 관찰합니다. (1) 처리 바이트 미리보기 숫자가 <code>SELECT *</code>일 때와 어떻게 다른지, (2) LIMIT을 100으로 바꿔도 처리 바이트가 그대로인지.</p>
+<h4 id="2-where">(2) WHERE<a class="headerlink" href="#2-where" title="이 위치로 링크">&para;</a></h4>
+<ul>
+<li>같은 점: <code>=</code>, <code>&lt;</code>, <code>IN</code>, <code>LIKE</code>, <code>BETWEEN</code>으로 행을 거르는 문법은 동일합니다.</li>
+<li>달라지는 점: 이 데이터의 <code>is_fraud</code>는 불리언이 아니라 STRING(<code>'Yes'</code> 또는 <code>'No'</code>)입니다. 조건을 걸기 전에 Schema 탭에서 타입부터 확인하는 습관이 필요합니다. 또한 파티셔닝이 없는 테이블에서는 WHERE로 걸러도 스캔 바이트가 줄지 않는 게 보통입니다 — 이 문제의 해법은 3일차에서 다룹니다 → <a href="day3-lecture.html">Day 3 강의안</a></li>
+</ul>
+<div class="language-sql highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="c1">-- 데모 2: 사기로 표시된 거래만 조회</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="k">SELECT</span>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="w">    </span><span class="n">t</span><span class="p">.</span><span class="n">user_id</span><span class="p">,</span>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="w">    </span><span class="n">t</span><span class="p">.</span><span class="n">merchant_city</span><span class="p">,</span>
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="w">    </span><span class="n">t</span><span class="p">.</span><span class="n">amount</span>
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="k">FROM</span>
+</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="w">    </span><span class="o">`</span><span class="n">finda</span><span class="o">-</span><span class="n">week7</span><span class="o">-</span><span class="mi">505502</span><span class="p">.</span><span class="n">tabformer</span><span class="p">.</span><span class="n">transactions</span><span class="o">`</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">t</span>
+</span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a><span class="k">WHERE</span>
+</span><span id="__span-9-9"><a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a><span class="w">    </span><span class="n">t</span><span class="p">.</span><span class="n">is_fraud</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'Yes'</span>
+</span><span id="__span-9-10"><a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a><span class="k">LIMIT</span><span class="w"> </span><span class="mi">10</span><span class="p">;</span>
+</span></code></pre></div>
+<h4 id="3-order-by">(3) ORDER BY<a class="headerlink" href="#3-order-by" title="이 위치로 링크">&para;</a></h4>
+<ul>
+<li>같은 점: <code>ORDER BY 컬럼 DESC</code> 정렬 문법은 동일합니다.</li>
+<li>달라지는 점: 2,400만 행 전체 정렬은 무거운 작업이니 <code>ORDER BY</code>에는 <code>LIMIT</code>을 함께 쓰는 습관을 들입니다. 그리고 아래 데모에서 "타입이 틀리면 정렬도 거짓말을 한다"를 확인합니다.</li>
+</ul>
+<div class="language-sql highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="c1">-- 데모 3: 금액이 큰 거래 Top 5... 처럼 보이는 함정</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="k">SELECT</span>
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="w">    </span><span class="n">t</span><span class="p">.</span><span class="n">amount</span>
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="k">FROM</span>
+</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="w">    </span><span class="o">`</span><span class="n">finda</span><span class="o">-</span><span class="n">week7</span><span class="o">-</span><span class="mi">505502</span><span class="p">.</span><span class="n">tabformer</span><span class="p">.</span><span class="n">transactions</span><span class="o">`</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">t</span>
+</span><span id="__span-10-6"><a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span>
+</span><span id="__span-10-7"><a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="w">    </span><span class="n">t</span><span class="p">.</span><span class="n">amount</span><span class="w"> </span><span class="k">DESC</span>
+</span><span id="__span-10-8"><a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a><span class="k">LIMIT</span><span class="w"> </span><span class="mi">5</span><span class="p">;</span>
+</span></code></pre></div>
+<p>결과를 보면 <code>$99.xx</code>대가 최상위에 옵니다. <code>amount</code>가 STRING이라 <strong>사전순 정렬</strong>이 되었기 때문입니다 (<code>'$99'</code>가 <code>'$100'</code>보다 뒤). 그래서 다음 단계, 타입 정제가 필요합니다.</p>
+<h4 id="4-타입-정제--replace-safe_cast-date-합성-sqld에는-없던-실전-단계">(4) 타입 정제 — REPLACE, SAFE_CAST, DATE 합성 (SQLD에는 없던 실전 단계)<a class="headerlink" href="#4-타입-정제--replace-safe_cast-date-합성-sqld에는-없던-실전-단계" title="이 위치로 링크">&para;</a></h4>
+<ul>
+<li>같은 점: <code>CAST</code>와 문자열 함수의 존재 자체는 SQLD에서 배웠습니다.</li>
+<li>달라지는 점: 실무 데이터는 <code>$54.30</code>처럼 지저분하게 들어옵니다. BigQuery에는 <code>SAFE_CAST</code>가 있어서, 변환에 실패한 값을 에러 대신 <strong>NULL로 처리</strong>합니다. 2,400만 행 중 이상한 값 한 건 때문에 쿼리 전체가 죽는 것을 막아 줍니다.</li>
+</ul>
+<p>이번 주 내내 쓸 두 가지 필수 스니펫입니다. 외우다시피 하게 될 겁니다.</p>
+<div class="language-sql highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="c1">-- 데모 4: 금액 정제와 날짜 합성 — 이번 주의 필수 스니펫 두 가지</span>
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="k">SELECT</span>
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="w">    </span><span class="n">t</span><span class="p">.</span><span class="n">amount</span><span class="w">                                             </span><span class="k">AS</span><span class="w"> </span><span class="n">amount_raw</span><span class="p">,</span>
+</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="w">    </span><span class="n">SAFE_CAST</span><span class="p">(</span><span class="k">REPLACE</span><span class="p">(</span><span class="n">t</span><span class="p">.</span><span class="n">amount</span><span class="p">,</span><span class="w"> </span><span class="s1">'$'</span><span class="p">,</span><span class="w"> </span><span class="s1">''</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="nb">NUMERIC</span><span class="p">)</span><span class="w">     </span><span class="k">AS</span><span class="w"> </span><span class="n">amount_usd</span><span class="p">,</span><span class="w">   </span><span class="c1">-- (1) 달러 기호 제거 후 숫자로</span>
+</span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a><span class="w">    </span><span class="nb">DATE</span><span class="p">(</span><span class="n">t</span><span class="p">.</span><span class="k">year</span><span class="p">,</span><span class="w"> </span><span class="n">t</span><span class="p">.</span><span class="k">month</span><span class="p">,</span><span class="w"> </span><span class="n">t</span><span class="p">.</span><span class="k">day</span><span class="p">)</span><span class="w">                         </span><span class="k">AS</span><span class="w"> </span><span class="n">tx_date</span><span class="p">,</span><span class="w">      </span><span class="c1">-- (2) 흩어진 연, 월, 일을 날짜로</span>
+</span><span id="__span-11-6"><a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a><span class="w">    </span><span class="n">t</span><span class="p">.</span><span class="k">time</span>
+</span><span id="__span-11-7"><a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a><span class="k">FROM</span>
+</span><span id="__span-11-8"><a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a><span class="w">    </span><span class="o">`</span><span class="n">finda</span><span class="o">-</span><span class="n">week7</span><span class="o">-</span><span class="mi">505502</span><span class="p">.</span><span class="n">tabformer</span><span class="p">.</span><span class="n">transactions</span><span class="o">`</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">t</span>
+</span><span id="__span-11-9"><a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a><span class="k">LIMIT</span><span class="w"> </span><span class="mi">5</span><span class="p">;</span>
+</span></code></pre></div>
+<ul>
+<li>(1) <code>REPLACE(t.amount, '$', '')</code>로 달러 기호를 떼고, <code>SAFE_CAST(... AS NUMERIC)</code>으로 숫자화합니다. 금액 계산에는 부동소수점 오차가 없는 NUMERIC 타입이 안전합니다.</li>
+<li>(2) <code>DATE(year, month, day)</code>는 흩어진 세 정수 컬럼을 진짜 DATE로 합성합니다. SQLD에서 배운 <code>TO_DATE</code>류의 BigQuery식 표현이라고 생각하면 됩니다.</li>
+</ul>
+<h4 id="5-집계-함수--count-sum-avg">(5) 집계 함수 — COUNT, SUM, AVG<a class="headerlink" href="#5-집계-함수--count-sum-avg" title="이 위치로 링크">&para;</a></h4>
+<ul>
+<li>같은 점: <code>COUNT(*)</code>, <code>SUM</code>, <code>AVG</code>의 의미와 문법은 동일합니다.</li>
+<li>달라지는 점: STRING 컬럼에는 SUM을 걸 수 없으므로, <strong>정제 스니펫을 집계 함수 안에 넣는 패턴</strong>이 기본형이 됩니다. <code>ROUND(값, 2)</code>로 자릿수를 정리합니다.</li>
+</ul>
+<div class="language-sql highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="c1">-- 데모 5: 연도별 거래 건수 — GROUP BY 복습을 겸해서</span>
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="k">SELECT</span>
+</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="w">    </span><span class="n">t</span><span class="p">.</span><span class="k">year</span><span class="p">,</span>
+</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="w">    </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">n_tx</span>
+</span><span id="__span-12-5"><a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a><span class="k">FROM</span>
+</span><span id="__span-12-6"><a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a><span class="w">    </span><span class="o">`</span><span class="n">finda</span><span class="o">-</span><span class="n">week7</span><span class="o">-</span><span class="mi">505502</span><span class="p">.</span><span class="n">tabformer</span><span class="p">.</span><span class="n">transactions</span><span class="o">`</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">t</span>
+</span><span id="__span-12-7"><a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a><span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span>
+</span><span id="__span-12-8"><a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a><span class="w">    </span><span class="n">t</span><span class="p">.</span><span class="k">year</span>
+</span><span id="__span-12-9"><a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span>
+</span><span id="__span-12-10"><a id="__codelineno-12-10" name="__codelineno-12-10" href="#__codelineno-12-10"></a><span class="w">    </span><span class="n">t</span><span class="p">.</span><span class="k">year</span><span class="p">;</span>
+</span></code></pre></div>
+<h4 id="6-group-by와-having">(6) GROUP BY와 HAVING<a class="headerlink" href="#6-group-by와-having" title="이 위치로 링크">&para;</a></h4>
+<ul>
+<li>같은 점: "GROUP BY는 피벗테이블의 SQL 버전"이라는 감각 그대로입니다. <strong>WHERE는 집계 전 행 필터, HAVING은 집계 후 그룹 필터</strong>라는 구분도 동일합니다 (이번 주 내내 반복할 문장입니다).</li>
+<li>달라지는 점: BigQuery는 <code>GROUP BY 1</code>처럼 SELECT 목록의 위치 번호를 쓸 수 있고, <strong>HAVING에서 SELECT의 별칭을 그대로 쓸 수 있습니다</strong> (표준 SQL에서는 안 되는 경우가 많아 SQLD 지식과 다른 지점).</li>
+</ul>
+<div class="language-sql highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="c1">-- 데모 6: 연간 거래가 100만 건을 넘는 해만 — HAVING에서 별칭 n_tx를 바로 사용</span>
+</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="k">SELECT</span>
+</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="w">    </span><span class="n">t</span><span class="p">.</span><span class="k">year</span><span class="p">,</span>
+</span><span id="__span-13-4"><a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a><span class="w">    </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">n_tx</span>
+</span><span id="__span-13-5"><a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a><span class="k">FROM</span>
+</span><span id="__span-13-6"><a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a><span class="w">    </span><span class="o">`</span><span class="n">finda</span><span class="o">-</span><span class="n">week7</span><span class="o">-</span><span class="mi">505502</span><span class="p">.</span><span class="n">tabformer</span><span class="p">.</span><span class="n">transactions</span><span class="o">`</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">t</span>
+</span><span id="__span-13-7"><a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a><span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span>
+</span><span id="__span-13-8"><a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a><span class="w">    </span><span class="n">t</span><span class="p">.</span><span class="k">year</span>
+</span><span id="__span-13-9"><a id="__codelineno-13-9" name="__codelineno-13-9" href="#__codelineno-13-9"></a><span class="k">HAVING</span>
+</span><span id="__span-13-10"><a id="__codelineno-13-10" name="__codelineno-13-10" href="#__codelineno-13-10"></a><span class="w">    </span><span class="n">n_tx</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">1000000</span>
+</span><span id="__span-13-11"><a id="__codelineno-13-11" name="__codelineno-13-11" href="#__codelineno-13-11"></a><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span>
+</span><span id="__span-13-12"><a id="__codelineno-13-12" name="__codelineno-13-12" href="#__codelineno-13-12"></a><span class="w">    </span><span class="n">t</span><span class="p">.</span><span class="k">year</span><span class="p">;</span>
+</span></code></pre></div>
+<h4 id="7-distinct">(7) DISTINCT<a class="headerlink" href="#7-distinct" title="이 위치로 링크">&para;</a></h4>
+<ul>
+<li>같은 점: 중복 제거와 <code>COUNT(DISTINCT 컬럼)</code> 문법은 동일합니다.</li>
+<li>달라지는 점: 수억 행 이상에서는 정확한 <code>COUNT(DISTINCT)</code>가 무거워서, BigQuery에는 근사치를 빠르게 내는 <code>APPROX_COUNT_DISTINCT</code>가 따로 있습니다. 오늘은 이름만 기억해 두세요.</li>
+</ul>
+<div class="language-sql highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="c1">-- 데모 7: 거래가 발생한 주(state)는 몇 개인가</span>
+</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="k">SELECT</span>
+</span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="w">    </span><span class="k">COUNT</span><span class="p">(</span><span class="k">DISTINCT</span><span class="w"> </span><span class="n">t</span><span class="p">.</span><span class="n">merchant_state</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">n_states</span>
+</span><span id="__span-14-4"><a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a><span class="k">FROM</span>
+</span><span id="__span-14-5"><a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a><span class="w">    </span><span class="o">`</span><span class="n">finda</span><span class="o">-</span><span class="n">week7</span><span class="o">-</span><span class="mi">505502</span><span class="p">.</span><span class="n">tabformer</span><span class="p">.</span><span class="n">transactions</span><span class="o">`</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">t</span><span class="p">;</span>
+</span></code></pre></div>
+<h4 id="리프레셔-마무리-작성-순서와-실행-순서">리프레셔 마무리: 작성 순서와 실행 순서<a class="headerlink" href="#리프레셔-마무리-작성-순서와-실행-순서" title="이 위치로 링크">&para;</a></h4>
+<p>쿼리가 안 돌아갈 때 늘 다시 보게 되는 표입니다.</p>
+<table>
+<thead>
+<tr>
+<th>순서</th>
+<th>쿼리를 쓰는 순서</th>
+<th>실제 실행되는 순서</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>SELECT</td>
+<td>FROM</td>
+</tr>
+<tr>
+<td>2</td>
+<td>FROM</td>
+<td>WHERE</td>
+</tr>
+<tr>
+<td>3</td>
+<td>WHERE</td>
+<td>GROUP BY</td>
+</tr>
+<tr>
+<td>4</td>
+<td>GROUP BY</td>
+<td>HAVING</td>
+</tr>
+<tr>
+<td>5</td>
+<td>HAVING</td>
+<td>SELECT</td>
+</tr>
+<tr>
+<td>6</td>
+<td>ORDER BY</td>
+<td>ORDER BY</td>
+</tr>
+<tr>
+<td>7</td>
+<td>LIMIT</td>
+<td>LIMIT</td>
+</tr>
+</tbody>
+</table>
+<p>표준 실행 순서상 HAVING은 SELECT보다 먼저라 별칭을 모르는 게 원칙인데, BigQuery가 편의상 별칭 사용을 허용해 주는 것 — 이렇게 이해하면 데모 6이 표준 SQL 지식과 충돌하지 않습니다.</p>
+<h3 id="실습-카드사-신입-분석가의-첫-데이터-훑어보기-20분">실습: 카드사 신입 분석가의 첫 데이터 훑어보기 (20분)<a class="headerlink" href="#실습-카드사-신입-분석가의-첫-데이터-훑어보기-20분" title="이 위치로 링크">&para;</a></h3>
+<p>상황: 여러분은 카드사 데이터분석팀에 오늘 합류했습니다. 팀장의 첫 지시는 이렇습니다. "본격 분석 전에, 우리 거래 데이터의 규모와 기본 분포부터 감을 잡아서 공유해 주세요."</p>
+<p>진행 방식: 각자 BigQuery 콘솔에서 직접 쿼리를 작성해 답을 구합니다. 문제마다 결과 숫자와 함께 <strong>한 줄 해석</strong>을 메모하세요 (분석가의 답은 숫자가 아니라 문장입니다). 모든 문제에서 실행 전 처리 바이트 확인을 잊지 마세요.</p>
+<h4 id="문제-1-워밍업-우리-회사가-보유한-거래는-총-몇-건이고-총-거래액과-평균-거래-금액은-얼마인가">문제 1 (워밍업). 우리 회사가 보유한 거래는 총 몇 건이고, 총 거래액과 평균 거래 금액은 얼마인가?<a class="headerlink" href="#문제-1-워밍업-우리-회사가-보유한-거래는-총-몇-건이고-총-거래액과-평균-거래-금액은-얼마인가" title="이 위치로 링크">&para;</a></h4>
+<ul>
+<li>힌트 1: <code>COUNT(*)</code>, <code>SUM</code>, <code>AVG</code>를 한 쿼리에서 함께 쓸 수 있습니다.</li>
+<li>힌트 2: <code>amount</code>는 STRING입니다. 데모 4의 정제 스니펫을 집계 함수 안에 넣으세요.</li>
+<li>힌트 3: <code>ROUND(값, 2)</code>로 소수 둘째 자리까지 정리하면 보기 좋습니다.</li>
+</ul>
+<h4 id="문제-2-거래가-가장-많이-발생한-주merchant_state-top-5는-어디이고-각각-몇-건인가">문제 2. 거래가 가장 많이 발생한 주(merchant_state) Top 5는 어디이고, 각각 몇 건인가?<a class="headerlink" href="#문제-2-거래가-가장-많이-발생한-주merchant_state-top-5는-어디이고-각각-몇-건인가" title="이 위치로 링크">&para;</a></h4>
+<ul>
+<li>힌트 1: <code>GROUP BY</code> + <code>COUNT(*)</code> + <code>ORDER BY ... DESC</code> + <code>LIMIT 5</code> 조합입니다.</li>
+<li>힌트 2: 결과 상위권에 주 이름이 아닌 값(비어 있는 값)이 보인다면, 그 거래들은 어떤 거래일지 생각해 보세요. 온라인 거래는 가맹점 주(state)가 없습니다.</li>
+</ul>
+<h4 id="문제-3-결제-방식use_chip별로-거래-건수와-평균-거래-금액은-어떻게-다른가-온라인-거래의-평균-금액은-대면-거래보다-큰가">문제 3. 결제 방식(use_chip)별로 거래 건수와 평균 거래 금액은 어떻게 다른가? 온라인 거래의 평균 금액은 대면 거래보다 큰가?<a class="headerlink" href="#문제-3-결제-방식use_chip별로-거래-건수와-평균-거래-금액은-어떻게-다른가-온라인-거래의-평균-금액은-대면-거래보다-큰가" title="이 위치로 링크">&para;</a></h4>
+<ul>
+<li>힌트 1: <code>GROUP BY t.use_chip</code>에 <code>COUNT(*)</code>와 정제된 <code>AVG</code>를 함께 붙입니다.</li>
+<li>힌트 2: 결과를 보고 "어떤 채널의 객단가가 높은가"를 한 줄로 해석해 보세요.</li>
+</ul>
+<h4 id="문제-4-도전-거래-건수가-10만-건-이상인-주-가운데-평균-거래-금액이-가장-높은-주-top-5는-어디인가">문제 4 (도전). 거래 건수가 10만 건 이상인 주 가운데, 평균 거래 금액이 가장 높은 주 Top 5는 어디인가?<a class="headerlink" href="#문제-4-도전-거래-건수가-10만-건-이상인-주-가운데-평균-거래-금액이-가장-높은-주-top-5는-어디인가" title="이 위치로 링크">&para;</a></h4>
+<p>비즈니스 배경: 거래가 몇 건 없는 주는 평균이 우연에 좌우됩니다. "시장 규모가 충분한 주 중에서 객단가가 높은 곳"을 찾는 것이 실무형 질문입니다.</p>
+<ul>
+<li>힌트 1: 집계 후 그룹을 거르는 것이므로 WHERE가 아니라 <code>HAVING</code>입니다.</li>
+<li>힌트 2: BigQuery는 HAVING에서 SELECT 별칭을 쓸 수 있습니다 (데모 6 참고).</li>
+<li>힌트 3: 온라인 거래(주 없음)는 제외하고 싶다면 집계 전에 걸러야 합니다 — 이건 WHERE의 일입니다.</li>
+</ul>
+<h4 id="보너스-일찍-끝난-사람-전체-거래-중-사기-거래is_fraud--yes는-몇-건이고-비율은-몇-인가">보너스 (일찍 끝난 사람). 전체 거래 중 사기 거래(is_fraud = 'Yes')는 몇 건이고, 비율은 몇 %인가?<a class="headerlink" href="#보너스-일찍-끝난-사람-전체-거래-중-사기-거래is_fraud--yes는-몇-건이고-비율은-몇-인가" title="이 위치로 링크">&para;</a></h4>
+<ul>
+<li>힌트: <code>COUNTIF(조건)</code> 함수를 쓰면 한 쿼리로 끝납니다. <code>CASE WHEN</code>과 SUM 조합으로도 됩니다.</li>
+</ul>
+<h3 id="오늘의-마무리-5분">오늘의 마무리 (5분)<a class="headerlink" href="#오늘의-마무리-5분" title="이 위치로 링크">&para;</a></h3>
+<ul>
+<li>오늘 한 일: 클라우드 DW 개념 → 2,400만 행 적재 → 기초 집계까지. 여러분은 이제 "실무 규모의 데이터를 실무 도구로" 만져 본 사람입니다.</li>
+<li>내일 (2일차): 이 데이터를 다루는 사람들, 즉 금융 데이터 분석 직무의 실제 업무를 살펴보고, 세 테이블의 컬럼 하나하나를 뜯어봅니다 → <a href="day2-lecture.html">Day 2 강의안</a></li>
+<li>오늘 적재가 끝까지 안 된 사람은 부록(Cloud Shell 한 번에)을 따라 내일 수업 전까지 완료해 오세요. 막히면 슬랙 채널에 에러 메시지 캡처와 함께 질문을 남기면 됩니다.</li>
+</ul>
+<hr />
+<p>오늘의 핵심 교훈 한 줄: <strong>"큰 데이터는 창고(GCS)를 거쳐 한 곳(BigQuery)에 모으고, 쿼리는 실행 버튼을 누르기 전에 처리 바이트부터 읽는다."</strong></p>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  맨위로
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="하단/푸터" >
+        
+          
+          <a href="../index.html" class="md-footer__link md-footer__link--prev" aria-label="이전: 소개">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                이전
+              </span>
+              <div class="md-ellipsis">
+                소개
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="day2-lecture.html" class="md-footer__link md-footer__link--next" aria-label="다음: Day 2 — 금융 데이터 분석 직무와 실습 데이터">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                다음
+              </span>
+              <div class="md-ellipsis">
+                Day 2 — 금융 데이터 분석 직무와 실습 데이터
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2026 Eunjung Cho
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/Eunjung-Cho" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.sections", "navigation.expand", "navigation.top", "navigation.footer", "navigation.tracking", "toc.follow", "search.highlight", "search.suggest", "content.code.copy", "content.action.edit"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\ud074\ub9bd\ubcf4\ub4dc\uc5d0 \ubcf5\uc0ac\ub428", "clipboard.copy": "\ud074\ub9bd\ubcf4\ub4dc\ub85c \ubcf5\uc0ac", "search.result.more.one": "\uc774 \ubb38\uc11c\uc5d0\uc11c 1\uac1c\uc758 \uac80\uc0c9 \uacb0\uacfc \ub354 \ubcf4\uae30", "search.result.more.other": "\uc774 \ubb38\uc11c\uc5d0\uc11c #\uac1c\uc758 \uac80\uc0c9 \uacb0\uacfc \ub354 \ubcf4\uae30", "search.result.none": "\uac80\uc0c9\uc5b4\uc640 \uc77c\uce58\ud558\ub294 \ubb38\uc11c\uac00 \uc5c6\uc2b5\ub2c8\ub2e4", "search.result.one": "1\uac1c\uc758 \uc77c\uce58\ud558\ub294 \ubb38\uc11c", "search.result.other": "#\uac1c\uc758 \uc77c\uce58\ud558\ub294 \ubb38\uc11c", "search.result.placeholder": "\uac80\uc0c9\uc5b4\ub97c \uc785\ub825\ud558\uc138\uc694", "search.result.term.missing": "\ud3ec\ud568\ub418\uc9c0 \uc54a\uc740 \uac80\uc0c9\uc5b4", "select.version": "\ubc84\uc804 \uc120\ud0dd"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

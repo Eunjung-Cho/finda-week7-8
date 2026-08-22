@@ -1,0 +1,2186 @@
+
+<!doctype html>
+<html lang="ko" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="금융 데이터 분석 부트캠프 심화반 2기 — 7주차 BigQuery와 데이터 마트, 8주차 고급 SQL과 금융 데이터 분석">
+      
+      
+        <meta name="author" content="Eunjung Cho">
+      
+      
+        <link rel="canonical" href="https://eunjung-cho.github.io/finda-week7-8/week7/day2-lecture.html">
+      
+      
+        <link rel="prev" href="day1-lecture.html">
+      
+      
+        <link rel="next" href="day3-lecture.html">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Day 2 — 금융 데이터 분석 직무와 실습 데이터 - FinDA_7,8week</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#finda-7주차-2일차--금융-데이터-분석-직무와-실습-데이터-소개" class="md-skip">
+          콘텐츠로 이동
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="상단/헤더">
+    <a href="../index.html" title="FinDA_7,8week" class="md-header__button md-logo" aria-label="FinDA_7,8week" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            FinDA_7,8week
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Day 2 — 금융 데이터 분석 직무와 실습 데이터
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="다크 모드로 전환"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="다크 모드로 전환" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="라이트 모드로 전환"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="라이트 모드로 전환" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="검색" placeholder="검색" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="검색">
+        
+        <button type="reset" class="md-search__icon md-icon" title="지우기" aria-label="지우기" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            검색 초기화
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/Eunjung-Cho/finda-week7-8" title="저장소로 이동" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Eunjung-Cho/finda-week7-8
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="네비게이션" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../index.html" title="FinDA_7,8week" class="md-nav__button md-logo" aria-label="FinDA_7,8week" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    FinDA_7,8week
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/Eunjung-Cho/finda-week7-8" title="저장소로 이동" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Eunjung-Cho/finda-week7-8
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    소개
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7주차. BigQuery와 금융 데이터 분석
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    7주차. BigQuery와 금융 데이터 분석
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="day1-lecture.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Day 1 — BigQuery 입문, 데이터 적재, 기초 쿼리
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--draft-v0.2"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Day 2 — 금융 데이터 분석 직무와 실습 데이터
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--draft-v0.2"></span>
+  
+
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="day2-lecture.html" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Day 2 — 금융 데이터 분석 직무와 실습 데이터
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--draft-v0.2"></span>
+  
+
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="목차">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      목차
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#오늘의-큰-그림" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        오늘의 큰 그림
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="오늘의 큰 그림">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#시간표" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        시간표
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#session-2-1-금융-데이터-분석은-무슨-일을-하는가-50분" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Session 2-1. 금융 데이터 분석은 무슨 일을 하는가 (50분)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Session 2-1. 금융 데이터 분석은 무슨 일을 하는가 (50분)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-왜-직무-이야기부터-하는가-5분" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. 왜 직무 이야기부터 하는가 (5분)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-업권별-데이터-분석-지형-10분" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. 업권별 데이터 분석 지형 (10분)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-직무-유형-여섯-가지-15분" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. 직무 유형 여섯 가지 (15분)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-분석가의-하루--업무-흐름-한-바퀴-7분" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. 분석가의 하루 — 업무 흐름 한 바퀴 (7분)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-채용-공고의-sql-역량은-무엇을-뜻하는가-8분" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. 채용 공고의 "SQL 역량"은 무엇을 뜻하는가 (8분)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-학생-토론-5분" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. 학생 토론 (5분)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#session-2-2-실습-데이터-자세히-알기--ibm-tabformer-60분" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Session 2-2. 실습 데이터 자세히 알기 — IBM TabFormer (60분)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Session 2-2. 실습 데이터 자세히 알기 — IBM TabFormer (60분)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-이-데이터는-어디서-왔는가-8분" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. 이 데이터는 어디서 왔는가 (8분)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-세-테이블의-역할과-관계-12분" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. 세 테이블의 역할과 관계 (12분)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-컬럼-사전--분석가의-눈으로-읽기-12분" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. 컬럼 사전 — 분석가의 눈으로 읽기 (12분)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-실제-카드사-데이터와-무엇이-같고-무엇이-없는가-10분" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. 실제 카드사 데이터와 무엇이 같고 무엇이 없는가 (10분)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-데이터-품질-특성--실무-원천-데이터도-이렇다-10분" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. 데이터 품질 특성 — "실무 원천 데이터도 이렇다" (10분)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-이-데이터로-답할-수-있는-비즈니스-질문-지도-8분" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. 이 데이터로 답할 수 있는 비즈니스 질문 지도 (8분)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#session-2-3-실습과-리뷰--비즈니스-질문-4개-50분" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Session 2-3. 실습과 리뷰 — 비즈니스 질문 4개 (50분)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Session 2-3. 실습과 리뷰 — 비즈니스 질문 4개 (50분)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#진행-안내-5분" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        진행 안내 (5분)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#실습-문제-20분" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        실습 문제 (20분)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#짝-리뷰-12분" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        짝 리뷰 (12분)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#자주-나오는-실수-미리보기-8분" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        자주 나오는 실수 미리보기 (8분)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#day-3-예고-5분" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Day 3 예고 (5분)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="day3-lecture.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Day 3 — 데이터 마트 설계와 구축
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--draft-v0.2"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="query-style-tips.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    쿼리 가독성을 높이는 팁
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--v0.1"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="query-execution-order.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    쿼리 작성 순서와 실행 순서
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--v0.1"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="bigquery-syntax.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BigQuery 주요 문법 정리
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--v0.1"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    8주차. 고급 SQL과 금융 데이터 분석
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    8주차. 고급 SQL과 금융 데이터 분석
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../week8/day1-lecture.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Day 1 — 비즈니스 질문을 SQL로 (고급 쿼리 패턴)
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--draft-v0.1"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../week8/day1-worksheet.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Day 1 사전 워크시트 — 윈도우 프레임 손풀기
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--draft-v0.1"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../week8/day2-lecture.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Day 2 — SQL로 하는 금융 데이터 분석
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--draft-v0.1"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../week8/day3-lecture.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Day 3 — DART에서 BigQuery로, 재무분석 파이프라인
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--draft-v0.1"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../week8/summary.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7·8주차 핵심 정리
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--draft-v0.1"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="목차">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      목차
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#오늘의-큰-그림" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        오늘의 큰 그림
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="오늘의 큰 그림">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#시간표" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        시간표
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#session-2-1-금융-데이터-분석은-무슨-일을-하는가-50분" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Session 2-1. 금융 데이터 분석은 무슨 일을 하는가 (50분)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Session 2-1. 금융 데이터 분석은 무슨 일을 하는가 (50분)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-왜-직무-이야기부터-하는가-5분" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. 왜 직무 이야기부터 하는가 (5분)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-업권별-데이터-분석-지형-10분" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. 업권별 데이터 분석 지형 (10분)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-직무-유형-여섯-가지-15분" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. 직무 유형 여섯 가지 (15분)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-분석가의-하루--업무-흐름-한-바퀴-7분" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. 분석가의 하루 — 업무 흐름 한 바퀴 (7분)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-채용-공고의-sql-역량은-무엇을-뜻하는가-8분" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. 채용 공고의 "SQL 역량"은 무엇을 뜻하는가 (8분)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-학생-토론-5분" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. 학생 토론 (5분)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#session-2-2-실습-데이터-자세히-알기--ibm-tabformer-60분" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Session 2-2. 실습 데이터 자세히 알기 — IBM TabFormer (60분)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Session 2-2. 실습 데이터 자세히 알기 — IBM TabFormer (60분)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-이-데이터는-어디서-왔는가-8분" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. 이 데이터는 어디서 왔는가 (8분)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-세-테이블의-역할과-관계-12분" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. 세 테이블의 역할과 관계 (12분)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-컬럼-사전--분석가의-눈으로-읽기-12분" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. 컬럼 사전 — 분석가의 눈으로 읽기 (12분)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-실제-카드사-데이터와-무엇이-같고-무엇이-없는가-10분" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. 실제 카드사 데이터와 무엇이 같고 무엇이 없는가 (10분)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-데이터-품질-특성--실무-원천-데이터도-이렇다-10분" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. 데이터 품질 특성 — "실무 원천 데이터도 이렇다" (10분)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-이-데이터로-답할-수-있는-비즈니스-질문-지도-8분" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. 이 데이터로 답할 수 있는 비즈니스 질문 지도 (8분)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#session-2-3-실습과-리뷰--비즈니스-질문-4개-50분" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Session 2-3. 실습과 리뷰 — 비즈니스 질문 4개 (50분)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Session 2-3. 실습과 리뷰 — 비즈니스 질문 4개 (50분)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#진행-안내-5분" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        진행 안내 (5분)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#실습-문제-20분" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        실습 문제 (20분)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#짝-리뷰-12분" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        짝 리뷰 (12분)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#자주-나오는-실수-미리보기-8분" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        자주 나오는 실수 미리보기 (8분)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#day-3-예고-5분" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Day 3 예고 (5분)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+    <a href="https://github.com/Eunjung-Cho/finda-week7-8/edit/main/docs/week7/day2-lecture.md" title="이 페이지를 편집" class="md-content__button md-icon" rel="edit">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
+    </a>
+  
+  
+
+
+<h1 id="finda-7주차-2일차--금융-데이터-분석-직무와-실습-데이터-소개">FinDA 7주차 2일차 — 금융 데이터 분석 직무와 실습 데이터 소개<a class="headerlink" href="#finda-7주차-2일차--금융-데이터-분석-직무와-실습-데이터-소개" title="이 위치로 링크">&para;</a></h1>
+<blockquote>
+<p>7주차 Day 2 (토, 3시간) 강의안. 금융권 데이터 분석 직무의 실제 모습을 이해하고, 실습 데이터(IBM TabFormer)를 실무 원천 데이터의 축소판으로 읽어낸 뒤, Day 1 기초 집계를 비즈니스 질문으로 한 단계 확장합니다.</p>
+</blockquote>
+<hr />
+<h2 id="오늘의-큰-그림">오늘의 큰 그림<a class="headerlink" href="#오늘의-큰-그림" title="이 위치로 링크">&para;</a></h2>
+<p>어제(<a href="day1-lecture.html">Day 1 강의안</a>)는 BigQuery에 데이터를 올리고 간단한 집계까지 실행했습니다. 오늘은 잠시 손을 멈추고 두 가지 질문에 답합니다.</p>
+<ul>
+<li>(1) 이 기술을 배우면 실제로 어떤 일을 하게 되는가? (Session 2-1)</li>
+<li>(2) 우리가 다루는 이 데이터는 정확히 무엇이고, 무엇을 물어볼 수 있는 데이터인가? (Session 2-2)</li>
+</ul>
+<p>그리고 마지막 세션에서 어제의 기초 집계를 "비즈니스 질문에 답하는 쿼리"로 확장합니다 (Session 2-3). 내일(<a href="day3-lecture.html">Day 3 강의안</a>)의 데이터 마트 실습은 오늘 만든 질문들을 "매번 다시 짜지 않게 만드는 법"입니다.</p>
+<h3 id="시간표">시간표<a class="headerlink" href="#시간표" title="이 위치로 링크">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>구분</th>
+<th>내용</th>
+<th>시간</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Session 2-1</td>
+<td>금융 데이터 분석은 무슨 일을 하는가</td>
+<td>50분</td>
+</tr>
+<tr>
+<td>쉬는 시간</td>
+<td></td>
+<td>10분</td>
+</tr>
+<tr>
+<td>Session 2-2</td>
+<td>실습 데이터 자세히 알기 (IBM TabFormer)</td>
+<td>60분</td>
+</tr>
+<tr>
+<td>쉬는 시간</td>
+<td></td>
+<td>10분</td>
+</tr>
+<tr>
+<td>Session 2-3</td>
+<td>실습과 리뷰 — 비즈니스 질문 4개</td>
+<td>50분</td>
+</tr>
+<tr>
+<td>합계</td>
+<td></td>
+<td>180분 (3시간)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="session-2-1-금융-데이터-분석은-무슨-일을-하는가-50분">Session 2-1. 금융 데이터 분석은 무슨 일을 하는가 (50분)<a class="headerlink" href="#session-2-1-금융-데이터-분석은-무슨-일을-하는가-50분" title="이 위치로 링크">&para;</a></h2>
+<h3 id="1-왜-직무-이야기부터-하는가-5분">1. 왜 직무 이야기부터 하는가 (5분)<a class="headerlink" href="#1-왜-직무-이야기부터-하는가-5분" title="이 위치로 링크">&para;</a></h3>
+<p>SQL 문법은 검색하면 나옵니다. 검색해도 안 나오는 것은 "어떤 질문을 던져야 하는지"와 "누구를 위해 이 쿼리를 짜는지"입니다. 오늘 세션의 목표는 여러분이 실습 문제를 풀 때 "GROUP BY 연습"이 아니라 "카드사 마케팅팀 분석가의 화요일 오전 업무"로 느끼게 만드는 것입니다.</p>
+<p>한 줄 정의부터 시작합니다.</p>
+<blockquote>
+<p>금융 데이터 분석가는 "돈의 흐름 기록"을 근거로 회사의 의사결정 질문에 답하는 사람입니다.</p>
+</blockquote>
+<h3 id="2-업권별-데이터-분석-지형-10분">2. 업권별 데이터 분석 지형 (10분)<a class="headerlink" href="#2-업권별-데이터-분석-지형-10분" title="이 위치로 링크">&para;</a></h3>
+<p>같은 "데이터 분석가"라도 업권마다 보는 데이터와 답하는 질문이 다릅니다.</p>
+<table>
+<thead>
+<tr>
+<th>업권</th>
+<th>핵심 데이터</th>
+<th>대표 분석 질문</th>
+<th>이번 실습과의 접점</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>카드사</td>
+<td>승인 거래 내역, 가맹점 정보, 회원 정보</td>
+<td>어떤 고객이 어디서 얼마를 쓰는가, 어떤 혜택을 설계할까</td>
+<td>TabFormer가 바로 이 형태 (거래 + 카드 + 회원)</td>
+</tr>
+<tr>
+<td>은행</td>
+<td>수신과 여신 계좌, 이체 내역, 신용 정보</td>
+<td>연체 위험은 누구에게 있는가, 주거래 고객은 누구인가</td>
+<td>users의 소득과 부채 컬럼이 축소판</td>
+</tr>
+<tr>
+<td>증권사</td>
+<td>주문과 체결 로그, 잔고, 시세</td>
+<td>어떤 고객이 이탈하는가, 어떤 상품이 팔리는가</td>
+<td>대용량 로그 처리 감각 (2,400만 행)</td>
+</tr>
+<tr>
+<td>핀테크</td>
+<td>앱 이벤트 로그, 결제와 송금 내역</td>
+<td>퍼널 어디서 이탈하는가, 사기 거래를 어떻게 막는가</td>
+<td>is_fraud 라벨, use_chip 채널 구분</td>
+</tr>
+</tbody>
+</table>
+<p>강조할 것: 업권이 달라도 데이터의 뼈대는 놀랄 만큼 비슷합니다. "누가(고객) 무엇으로(계좌 또는 카드) 언제 어디서 얼마를(거래)"이라는 구조가 반복됩니다. 이 구조를 한 번 제대로 다뤄보면 업권을 옮겨도 통합니다.</p>
+<h3 id="3-직무-유형-여섯-가지-15분">3. 직무 유형 여섯 가지 (15분)<a class="headerlink" href="#3-직무-유형-여섯-가지-15분" title="이 위치로 링크">&para;</a></h3>
+<p>실제 채용 공고와 조직도에서 자주 보이는 여섯 가지 역할을 봅니다. 한 사람이 여러 역할을 겸하는 경우도 많습니다.</p>
+<h4 id="1-bi와-지표-관리">(1) BI와 지표 관리<a class="headerlink" href="#1-bi와-지표-관리" title="이 위치로 링크">&para;</a></h4>
+<ul>
+<li>하는 일: 회사의 핵심 지표(신규 회원 수, 거래액, 활성 고객 수)를 정의하고, 매일 또는 매주 갱신되는 대시보드로 만들어 운영합니다.</li>
+<li>대표 질문: "이번 달 카드 이용액이 왜 빠졌는가? 어느 세그먼트에서 빠졌는가?"</li>
+<li>쓰는 SQL: 날짜별 집계, 전월 대비 비교, 세그먼트별 분해. 오늘 실습 문제 2(월별 추이)가 이 역할의 축소판입니다.</li>
+</ul>
+<h4 id="2-마케팅-타겟팅과-캠페인-분석">(2) 마케팅 타겟팅과 캠페인 분석<a class="headerlink" href="#2-마케팅-타겟팅과-캠페인-분석" title="이 위치로 링크">&para;</a></h4>
+<ul>
+<li>하는 일: "이 혜택을 받으면 반응할 것 같은 고객" 목록을 조건으로 추출하고, 캠페인 후 반응률과 증분 효과를 측정합니다.</li>
+<li>대표 질문: "지난 3개월간 온라인 쇼핑 업종에서 월 30만 원 이상 쓴 30대 고객은 몇 명인가?"</li>
+<li>쓰는 SQL: WHERE 조건 조합, JOIN으로 고객 속성 붙이기, 기간 집계. 오늘 실습 문제 3(성별 소비 비교)이 타겟팅의 첫걸음입니다.</li>
+</ul>
+<h4 id="3-clv와-이탈-분석">(3) CLV와 이탈 분석<a class="headerlink" href="#3-clv와-이탈-분석" title="이 위치로 링크">&para;</a></h4>
+<ul>
+<li>하는 일: 고객 한 명이 생애 동안 가져다줄 가치(CLV)를 추정하고, 거래가 끊기기 전에 이탈 징후를 찾아냅니다.</li>
+<li>대표 질문: "마지막 거래 후 90일이 지난 고객은 몇 명이고, 이들의 공통점은 무엇인가?"</li>
+<li>쓰는 SQL: 고객 단위 집계(첫 거래일, 마지막 거래일, 누적 금액), 기간 비교.</li>
+</ul>
+<h4 id="4-신용-리스크와-심사">(4) 신용 리스크와 심사<a class="headerlink" href="#4-신용-리스크와-심사" title="이 위치로 링크">&para;</a></h4>
+<ul>
+<li>하는 일: 대출 또는 카드 발급 심사에 쓰이는 변수(소득 대비 부채, 연체 이력)를 만들고 검증합니다. 규제와 감사 대응 때문에 "숫자의 근거"를 가장 엄격하게 따지는 직무입니다.</li>
+<li>대표 질문: "소득 대비 부채 비율이 높은 고객군의 한도 소진율은 어떻게 다른가?"</li>
+<li>쓰는 SQL: 파생 변수 계산(CASE WHEN 구간화), 코호트 비교.</li>
+</ul>
+<h4 id="5-fds-이상거래-탐지">(5) FDS (이상거래 탐지)<a class="headerlink" href="#5-fds-이상거래-탐지" title="이 위치로 링크">&para;</a></h4>
+<ul>
+<li>하는 일: 사기 거래 패턴을 룰과 모델로 탐지합니다. 실시간 차단 룰과 사후 배치 분석이 함께 갑니다.</li>
+<li>대표 질문: "오늘 새벽에 해외 온라인 거래가 갑자기 몰린 카드는 없는가?"</li>
+<li>쓰는 SQL: 채널별 또는 시간대별 사기율 집계, 임계값 튜닝. 오늘 실습 문제 4(채널별 사기율)가 FDS 분석의 출발점입니다.</li>
+</ul>
+<h4 id="6-상품과-서비스-분석">(6) 상품과 서비스 분석<a class="headerlink" href="#6-상품과-서비스-분석" title="이 위치로 링크">&para;</a></h4>
+<ul>
+<li>하는 일: 새 카드 상품, 앱 기능, 혜택 구조의 성과를 측정하고 개선안을 제안합니다.</li>
+<li>대표 질문: "새로 출시한 카드의 주 이용 업종이 기획 의도와 일치하는가?"</li>
+<li>쓰는 SQL: 상품별 그리고 업종별 교차 집계. 오늘 실습 문제 1(업종별 거래액 Top 10)이 이 역할의 기본기입니다.</li>
+</ul>
+<h3 id="4-분석가의-하루--업무-흐름-한-바퀴-7분">4. 분석가의 하루 — 업무 흐름 한 바퀴 (7분)<a class="headerlink" href="#4-분석가의-하루--업무-흐름-한-바퀴-7분" title="이 위치로 링크">&para;</a></h3>
+<p>여섯 직무 모두 아래 흐름을 돕니다. 도구만 다를 뿐 순서는 같습니다.</p>
+<pre class="mermaid"><code>flowchart LR
+    A["지표 요청&lt;br/&gt;현업 또는 리더의 질문"] --&gt; B["데이터 확인&lt;br/&gt;어느 테이블에 있고&lt;br/&gt;정의는 무엇인가"]
+    B --&gt; C["쿼리 작성&lt;br/&gt;추출 그리고 검증"]
+    C --&gt; D["마트 적재 또는&lt;br/&gt;대시보드 갱신"]
+    D --&gt; E["의사결정 보고&lt;br/&gt;숫자 + 해석 + 제언"]
+    E -.추가 질문과 피드백.-&gt; A</code></pre>
+<p>예시 시나리오 (수업에서 구두로 풀어주기):</p>
+<ul>
+<li>(1) 화요일 오전, 마케팅팀장이 묻습니다. "지난달 온라인 결제가 줄었다는데 진짜인가요? 어느 고객층에서 줄었나요?"</li>
+<li>(2) 분석가는 먼저 데이터를 확인합니다. 거래 테이블에 채널 구분 컬럼이 있는지, "온라인"의 정의가 무엇인지. (우리 데이터라면 use_chip 컬럼)</li>
+<li>(3) 쿼리를 짜서 월별 그리고 채널별 거래액을 뽑고, 고객 속성을 JOIN해 연령대별로 분해합니다.</li>
+<li>(4) 매달 같은 질문이 나올 것 같으면, 일회성 쿼리가 아니라 마트 테이블 또는 대시보드로 만들어 둡니다. (내일 배울 내용)</li>
+<li>(5) "줄어든 건 사실이지만 특정 프로모션 종료 효과이며, 해당 세그먼트 재유치 캠페인을 제안한다"까지 써야 보고가 끝납니다.</li>
+</ul>
+<p>핵심 메시지: 쿼리 작성은 다섯 단계 중 한 단계일 뿐입니다. 그러나 (2)와 (3)이 부실하면 (5)의 보고 전체가 무너집니다. 그래서 오늘 Session 2-2에서 데이터 자체를 한 시간 들여 뜯어봅니다.</p>
+<h3 id="5-채용-공고의-sql-역량은-무엇을-뜻하는가-8분">5. 채용 공고의 "SQL 역량"은 무엇을 뜻하는가 (8분)<a class="headerlink" href="#5-채용-공고의-sql-역량은-무엇을-뜻하는가-8분" title="이 위치로 링크">&para;</a></h3>
+<p>금융권 데이터 직무 공고에서 자주 보이는 문구를 실제 업무로 번역하면 다음과 같습니다.</p>
+<table>
+<thead>
+<tr>
+<th>공고 문구</th>
+<th>실제로 요구하는 것</th>
+<th>이번 주에 배우는 것과의 연결</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>"SQL을 활용한 대용량 데이터 추출 및 가공"</td>
+<td>수천만 행에서 필요한 것만 정확히, 그리고 비용을 의식하며 뽑는 능력</td>
+<td>2,400만 행 transactions, 처리 바이트 확인 습관</td>
+</tr>
+<tr>
+<td>"지표 정의 및 대시보드 구축 경험"</td>
+<td>지표의 분자와 분모를 스스로 정의하고 일관되게 유지하는 능력</td>
+<td>집계 기준(환불 포함 여부 등)을 명시하는 습관</td>
+</tr>
+<tr>
+<td>"현업 부서와 협업하여 비즈니스 문제 해결"</td>
+<td>모호한 질문을 쿼리 가능한 질문으로 바꾸는 능력</td>
+<td>실습을 비즈니스 질문 형태로 훈련</td>
+</tr>
+<tr>
+<td>"데이터 마트 설계 및 운영 경험"</td>
+<td>반복 질문을 재사용 가능한 테이블 구조로 만드는 능력</td>
+<td>Day 3 전체</td>
+</tr>
+<tr>
+<td>"쿼리 성능 최적화 경험"</td>
+<td>같은 답을 더 적은 스캔으로 얻는 방법을 아는 것</td>
+<td>이번 주 내내 처리 바이트 읽기, Day 3에서 심화</td>
+</tr>
+</tbody>
+</table>
+<p>강조할 것: "SQL 가능"의 기준은 문법 암기가 아니라, (1) 질문을 쿼리로 번역하고 (2) 결과를 검증하고 (3) 결과를 한 문장의 해석으로 되돌리는 왕복 능력입니다. 이번 주 실습 리뷰에서 "해석 한 줄"을 계속 요구하는 이유입니다.</p>
+<h3 id="6-학생-토론-5분">6. 학생 토론 (5분)<a class="headerlink" href="#6-학생-토론-5분" title="이 위치로 링크">&para;</a></h3>
+<blockquote>
+<p><strong>토론.</strong> 여섯 직무(BI와 지표 관리, 마케팅 타겟팅, CLV와 이탈, 신용 리스크, FDS, 상품 분석) 중 지금 가장 끌리는 직무는 무엇입니까? 그 이유를 "내가 좋아하는 종류의 질문"의 관점에서 한 문장으로 말해 봅시다. (예: "왜?를 파고드는 게 좋아서 BI", "사람의 행동 패턴이 궁금해서 마케팅")</p>
+</blockquote>
+<p>진행: 옆 사람과 2분 공유 후, 서너 명 전체 발표. 정답이 없는 토론이며, 9주차 최종 프로젝트 주제 선정의 씨앗이 됩니다.</p>
+<hr />
+<p>쉬는 시간 (10분)</p>
+<hr />
+<h2 id="session-2-2-실습-데이터-자세히-알기--ibm-tabformer-60분">Session 2-2. 실습 데이터 자세히 알기 — IBM TabFormer (60분)<a class="headerlink" href="#session-2-2-실습-데이터-자세히-알기--ibm-tabformer-60분" title="이 위치로 링크">&para;</a></h2>
+<h3 id="1-이-데이터는-어디서-왔는가-8분">1. 이 데이터는 어디서 왔는가 (8분)<a class="headerlink" href="#1-이-데이터는-어디서-왔는가-8분" title="이 위치로 링크">&para;</a></h3>
+<ul>
+<li>(1) 출처: IBM이 머신러닝 연구(TabFormer, 표 형태 데이터용 트랜스포머 모델)를 위해 공개한 <strong>시뮬레이션 신용카드 거래 데이터</strong>입니다. Kaggle의 "Credit Card Transactions (ealtman2019)" 데이터셋으로 배포됩니다.</li>
+<li>(2) 규모: 사용자 약 2,000명, 거래 약 2,400만 건, 기간 수십 년 치. 실습용으로는 "충분히 크지만 무료 한도 안"이라는 절묘한 크기입니다.</li>
+<li>(3) 시뮬레이션 데이터라는 한계를 분명히 알고 시작합니다.<ul>
+<li>실제 사람의 거래가 아니므로 개인정보 이슈가 없고, 마음껏 쿼리해도 됩니다.</li>
+<li>대신 분포가 현실보다 매끈합니다. 실제 데이터의 지저분함(중복 적재, 시스템 장애로 인한 결측 구간, 포맷이 다른 과거 데이터)은 상당 부분 빠져 있습니다.</li>
+<li>사기 라벨(is_fraud)도 시뮬레이터가 심어 놓은 패턴입니다. 여기서 발견한 사기 패턴이 실제 카드사에서 그대로 통한다고 생각하면 안 됩니다.</li>
+</ul>
+</li>
+<li>(4) 그럼에도 이 데이터를 쓰는 이유: 고객, 카드, 거래로 정규화된 3테이블 구조가 실제 카드사 데이터 웨어하우스의 뼈대와 같아서, JOIN과 세그먼트 분석과 마트 설계까지 하나의 도메인으로 관통할 수 있기 때문입니다.</li>
+</ul>
+<h3 id="2-세-테이블의-역할과-관계-12분">2. 세 테이블의 역할과 관계 (12분)<a class="headerlink" href="#2-세-테이블의-역할과-관계-12분" title="이 위치로 링크">&para;</a></h3>
+<pre class="mermaid"><code>erDiagram
+    users ||--o{ cards : "한 명이 여러 장 보유"
+    users ||--o{ transactions : "한 명이 여러 건 거래"
+    cards ||--o{ transactions : "한 장으로 여러 건 결제"
+
+    users {
+        INTEGER user_id PK "적재 때 행 순서로 부여"
+        STRING gender "성별"
+        INTEGER current_age "나이"
+        STRING yearly_income "달러 기호 포함 STRING"
+        STRING total_debt "달러 기호 포함 STRING"
+    }
+    cards {
+        INTEGER user FK "users.user_id 참조"
+        INTEGER card_index "사용자 내 카드 순번"
+        STRING card_brand "Visa, Mastercard 등"
+        STRING card_type "Credit, Debit 등"
+        STRING credit_limit "달러 기호 포함 STRING"
+    }
+    transactions {
+        INTEGER user_id FK
+        INTEGER card_id FK
+        INTEGER year
+        INTEGER month
+        INTEGER day
+        STRING time "HH:MM"
+        STRING amount "달러 기호 포함 STRING"
+        STRING use_chip "결제 채널"
+        STRING merchant_name
+        STRING merchant_city
+        STRING merchant_state
+        STRING zip
+        INTEGER mcc "업종 코드"
+        STRING errors
+        STRING is_fraud "Yes 또는 No"
+    }</code></pre>
+<p>역할로 다시 읽기 (내일 배울 용어의 예고편):</p>
+<ul>
+<li>(1) <strong>transactions</strong>는 "일어난 일"의 기록입니다. 한 행 = 카드 결제 한 건. 이런 테이블을 실무에서 팩트(fact) 테이블이라 부릅니다.</li>
+<li>(2) <strong>users</strong>와 <strong>cards</strong>는 "일어난 일을 설명해 주는 맥락"입니다. 누가, 어떤 카드로. 이런 테이블을 디멘전(dimension) 테이블이라 부릅니다.</li>
+<li>(3) 조인 경로는 두 개입니다.<ul>
+<li>transactions.user_id = users.user_id (고객 속성 붙이기)</li>
+<li>transactions.user_id = cards.user <strong>AND</strong> transactions.card_id = cards.card_index (카드 속성 붙이기, 키가 두 개인 것에 주의)</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>⚠️ <strong>컬럼 구성 캐비앗</strong>: 위 컬럼 목록은 이 강의안 기준이며, 데이터셋 버전과 적재 방식(자동 감지 여부)에 따라 실제 컬럼명이 다를 수 있습니다 (예: 원본 헤더 <code>Yearly Income - Person</code>이 <code>Yearly_Income___Person</code>으로 적재됨). <strong>반드시 본인 테이블의 Schema 탭에서 실제 컬럼명을 확인</strong>하고 쿼리에 사용하세요. Day 1 적재를 마치지 못했다면 <a href="day1-lecture.html">Day 1 강의안</a>를 먼저 완료해야 합니다.</p>
+<p>📷 스크린샷 추가 예정: (BigQuery 콘솔에서 transactions 테이블 Schema 탭을 연 화면, 컬럼명과 타입이 보이도록)</p>
+</blockquote>
+<h3 id="3-컬럼-사전--분석가의-눈으로-읽기-12분">3. 컬럼 사전 — 분석가의 눈으로 읽기 (12분)<a class="headerlink" href="#3-컬럼-사전--분석가의-눈으로-읽기-12분" title="이 위치로 링크">&para;</a></h3>
+<h4 id="transactions-약-2400만-행">transactions (약 2,400만 행)<a class="headerlink" href="#transactions-약-2400만-행" title="이 위치로 링크">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>컬럼</th>
+<th>타입</th>
+<th>의미</th>
+<th>분석가 메모</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>user_id</td>
+<td>INTEGER</td>
+<td>거래한 사용자</td>
+<td>users와의 조인 키</td>
+</tr>
+<tr>
+<td>card_id</td>
+<td>INTEGER</td>
+<td>사용한 카드의 사용자 내 순번</td>
+<td>cards.card_index와 짝</td>
+</tr>
+<tr>
+<td>year, month, day</td>
+<td>INTEGER</td>
+<td>거래 날짜 (세 컬럼으로 분리)</td>
+<td>DATE(year, month, day)로 합성해 사용</td>
+</tr>
+<tr>
+<td>time</td>
+<td>STRING</td>
+<td>거래 시각 HH:MM</td>
+<td>시간대 분석 시 파싱 필요</td>
+</tr>
+<tr>
+<td>amount</td>
+<td>STRING</td>
+<td>거래 금액, 예: $54.30</td>
+<td><strong>달러 기호 포함 문자열.</strong> 집계 전 반드시 정제</td>
+</tr>
+<tr>
+<td>use_chip</td>
+<td>STRING</td>
+<td>결제 채널 (칩, 스와이프, 온라인)</td>
+<td>채널별 분석과 사기율 비교의 축</td>
+</tr>
+<tr>
+<td>merchant_name</td>
+<td>STRING</td>
+<td>가맹점 이름 (숫자 형태 식별자)</td>
+<td>실명이 아닌 시뮬레이션 식별자</td>
+</tr>
+<tr>
+<td>merchant_city, merchant_state, zip</td>
+<td>STRING</td>
+<td>가맹점 위치</td>
+<td>온라인 거래는 위치가 비어 있음</td>
+</tr>
+<tr>
+<td>mcc</td>
+<td>INTEGER</td>
+<td>업종 코드 (Merchant Category Code)</td>
+<td>5411은 식료품점 같은 국제 표준 코드. 업종 분석의 핵심 축</td>
+</tr>
+<tr>
+<td>errors</td>
+<td>STRING</td>
+<td>거래 오류 내역</td>
+<td>대부분 비어 있음. 여러 오류가 콤마로 이어진 값도 존재</td>
+</tr>
+<tr>
+<td>is_fraud</td>
+<td>STRING</td>
+<td>사기 여부 "Yes" 또는 "No"</td>
+<td><strong>불리언이 아니라 문자열.</strong> 비교 시 따옴표 필요</td>
+</tr>
+</tbody>
+</table>
+<h4 id="users-약-2000명">users (약 2,000명)<a class="headerlink" href="#users-약-2000명" title="이 위치로 링크">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>컬럼 (대표)</th>
+<th>타입</th>
+<th>의미</th>
+<th>분석가 메모</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>user_id</td>
+<td>INTEGER</td>
+<td>사용자 식별자</td>
+<td><strong>원본 CSV에는 없던 컬럼.</strong> Day 1에서 행 순서(0부터)로 직접 부여해 적재함</td>
+</tr>
+<tr>
+<td>gender</td>
+<td>STRING</td>
+<td>성별</td>
+<td>세그먼트 축</td>
+</tr>
+<tr>
+<td>current_age</td>
+<td>INTEGER</td>
+<td>현재 나이</td>
+<td>연령대 구간화(CASE WHEN)에 사용</td>
+</tr>
+<tr>
+<td>yearly_income (계열)</td>
+<td>STRING</td>
+<td>연 소득</td>
+<td>달러 기호 포함 문자열, 정제 필요</td>
+</tr>
+<tr>
+<td>total_debt</td>
+<td>STRING</td>
+<td>총 부채</td>
+<td>달러 기호 포함 문자열, 정제 필요</td>
+</tr>
+</tbody>
+</table>
+<h4 id="cards">cards<a class="headerlink" href="#cards" title="이 위치로 링크">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>컬럼 (대표)</th>
+<th>타입</th>
+<th>의미</th>
+<th>분석가 메모</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>user</td>
+<td>INTEGER</td>
+<td>소유자 (users.user_id)</td>
+<td>컬럼명이 user_id가 아니라 user인 것에 주의</td>
+</tr>
+<tr>
+<td>card_index</td>
+<td>INTEGER</td>
+<td>사용자 내 카드 순번</td>
+<td>transactions.card_id와 짝</td>
+</tr>
+<tr>
+<td>card_brand</td>
+<td>STRING</td>
+<td>Visa, Mastercard, Amex 등</td>
+<td>브랜드별 비교 축</td>
+</tr>
+<tr>
+<td>card_type</td>
+<td>STRING</td>
+<td>Credit, Debit 등</td>
+<td>상품 분석 축</td>
+</tr>
+<tr>
+<td>credit_limit</td>
+<td>STRING</td>
+<td>카드 한도</td>
+<td>달러 기호 포함 문자열, 정제 필요</td>
+</tr>
+</tbody>
+</table>
+<h3 id="4-실제-카드사-데이터와-무엇이-같고-무엇이-없는가-10분">4. 실제 카드사 데이터와 무엇이 같고 무엇이 없는가 (10분)<a class="headerlink" href="#4-실제-카드사-데이터와-무엇이-같고-무엇이-없는가-10분" title="이 위치로 링크">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>구분</th>
+<th>TabFormer에 있는 것</th>
+<th>실제 카드사에는 더 있는 것</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>거래</td>
+<td>승인 거래 단위 기록, 금액, 가맹점, 업종 코드</td>
+<td>승인과 매입(정산)의 분리, 취소와 부분취소 체인, 할부 개월 정보</td>
+</tr>
+<tr>
+<td>고객</td>
+<td>성별, 나이, 소득, 부채</td>
+<td>신용 등급, 상품 가입 이력, 상담과 민원 이력, 앱 행동 로그</td>
+</tr>
+<tr>
+<td>카드</td>
+<td>브랜드, 종류, 한도</td>
+<td>발급 경로, 부가 혜택 구조, 연회비, 정지와 해지 상태 이력</td>
+</tr>
+<tr>
+<td>사기</td>
+<td>is_fraud 라벨 (건별 확정 라벨)</td>
+<td>신고와 조사 과정의 시차, 라벨이 확정되기까지 수 주가 걸리는 현실</td>
+</tr>
+<tr>
+<td>규모와 형태</td>
+<td>2,400만 행, 잘 정리된 3테이블</td>
+<td>수십억 행, 수백 개 테이블, 코드값 사전 없이는 못 읽는 컬럼들</td>
+</tr>
+</tbody>
+</table>
+<p>두 가지를 기억하세요.</p>
+<ul>
+<li>(1) <strong>구조는 진짜와 같습니다.</strong> "고객, 수단, 거래"의 3층 구조와 MCC 업종 코드는 실무 그대로입니다. 여기서 익힌 조인 경로와 질문 방식은 현업에서 재사용됩니다.</li>
+<li>(2) <strong>디테일은 축소판입니다.</strong> 특히 라벨(is_fraud)이 즉시 그리고 완벽하게 주어지는 것은 시뮬레이션의 특혜입니다. 실무에서는 라벨 자체를 만드는 일이 분석 업무의 절반입니다.</li>
+</ul>
+<h3 id="5-데이터-품질-특성--실무-원천-데이터도-이렇다-10분">5. 데이터 품질 특성 — "실무 원천 데이터도 이렇다" (10분)<a class="headerlink" href="#5-데이터-품질-특성--실무-원천-데이터도-이렇다-10분" title="이 위치로 링크">&para;</a></h3>
+<p>Day 1에서 이미 마주친 특성들을 "왜 이렇게 생겼는가"의 관점으로 다시 봅니다. 이것은 이 데이터의 결함이 아니라, <strong>원천 데이터의 보편적인 모습</strong>입니다.</p>
+<ul>
+<li>
+<p>(1) <strong>amount가 달러 기호 포함 문자열입니다.</strong> 원천 시스템은 사람이 읽기 좋은 형태로 값을 남기는 경우가 많습니다. 분석 전에 숫자로 바꾸는 정제는 분석가의 일상 업무입니다. 함께 실행해 봅시다 (개념 확인용 데모 쿼리, <code>finda-week7-505502</code>는 본인 프로젝트 ID로 교체).</p>
+<div class="language-sql highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1">-- 데모: 문자열 금액을 숫자로 정제하기 (전과 후 비교)</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="k">SELECT</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="n">t</span><span class="p">.</span><span class="n">amount</span><span class="w">                                             </span><span class="k">AS</span><span class="w"> </span><span class="n">raw_amount</span><span class="p">,</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">    </span><span class="n">SAFE_CAST</span><span class="p">(</span><span class="k">REPLACE</span><span class="p">(</span><span class="n">t</span><span class="p">.</span><span class="n">amount</span><span class="p">,</span><span class="w"> </span><span class="ss">"$"</span><span class="p">,</span><span class="w"> </span><span class="ss">""</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="nb">NUMERIC</span><span class="p">)</span><span class="w">     </span><span class="k">AS</span><span class="w"> </span><span class="n">clean_amount</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="k">FROM</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">    </span><span class="o">`</span><span class="n">finda</span><span class="o">-</span><span class="n">week7</span><span class="o">-</span><span class="mi">505502</span><span class="p">.</span><span class="n">tabformer</span><span class="p">.</span><span class="n">transactions</span><span class="o">`</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">t</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="k">LIMIT</span><span class="w"> </span><span class="mi">10</span><span class="p">;</span>
+</span></code></pre></div>
+<p>SAFE_CAST를 쓰는 이유: 변환 불가능한 값을 만나면 CAST는 쿼리 전체를 실패시키지만, SAFE_CAST는 그 행만 NULL로 만들고 계속 갑니다. 2,400만 행에서 어떤 값이 숨어 있을지 모를 때의 방어 운전입니다.</p>
+</li>
+<li>
+<p>(2) <strong>금액에 음수가 있습니다.</strong> 환불 또는 취소 거래입니다. 함께 확인해 봅시다.</p>
+<div class="language-sql highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1">-- 데모: 음수 금액(환불) 거래가 실제로 존재하는지 확인</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="k">SELECT</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span><span class="n">t</span><span class="p">.</span><span class="n">amount</span><span class="p">,</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">    </span><span class="n">t</span><span class="p">.</span><span class="n">merchant_name</span><span class="p">,</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">    </span><span class="nb">DATE</span><span class="p">(</span><span class="n">t</span><span class="p">.</span><span class="k">year</span><span class="p">,</span><span class="w"> </span><span class="n">t</span><span class="p">.</span><span class="k">month</span><span class="p">,</span><span class="w"> </span><span class="n">t</span><span class="p">.</span><span class="k">day</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">tx_date</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="k">FROM</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">    </span><span class="o">`</span><span class="n">finda</span><span class="o">-</span><span class="n">week7</span><span class="o">-</span><span class="mi">505502</span><span class="p">.</span><span class="n">tabformer</span><span class="p">.</span><span class="n">transactions</span><span class="o">`</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">t</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="k">WHERE</span>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="w">    </span><span class="n">SAFE_CAST</span><span class="p">(</span><span class="k">REPLACE</span><span class="p">(</span><span class="n">t</span><span class="p">.</span><span class="n">amount</span><span class="p">,</span><span class="w"> </span><span class="ss">"$"</span><span class="p">,</span><span class="w"> </span><span class="ss">""</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="nb">NUMERIC</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">0</span>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="k">LIMIT</span><span class="w"> </span><span class="mi">10</span><span class="p">;</span>
+</span></code></pre></div>
+<p>분석가의 질문: "총 거래액"을 구할 때 환불을 빼고 볼 것인가 포함할 것인가? 정답은 없고, <strong>지표 정의를 명시하는 것</strong>이 정답입니다. 매출 성과라면 환불을 반영하고, 소비 활동량이라면 절대값 또는 양수만 볼 수도 있습니다. 오늘 실습에서는 "환불 포함(있는 그대로 합산)"을 기본으로 합니다.</p>
+</li>
+<li>
+<p>(3) <strong>users에는 원래 조인 키가 없었습니다.</strong> 원본 CSV는 행 순서(0부터)가 곧 사용자 번호라는 암묵적 규칙을 갖고 있었고, Day 1에서 pandas로 user_id를 부여한 뒤 적재했습니다. 이것도 실무의 흔한 풍경입니다. 원천 시스템 담당자에게는 당연한 규칙이 문서화되지 않은 채 전달되고, 분석가가 그 규칙을 놓치면 <strong>조용히 틀린 조인</strong>이 만들어집니다. 에러가 나는 실수보다 에러 없이 틀리는 실수가 무섭습니다.</p>
+</li>
+<li>
+<p>(4) <strong>errors와 is_fraud는 문자열입니다.</strong> errors는 대부분 빈 값이고, 가끔 "Bad PIN,Insufficient Balance"처럼 여러 오류가 콤마로 이어져 있습니다. is_fraud는 "Yes" 또는 "No" 문자열이라 <code>t.is_fraud = "Yes"</code>처럼 따옴표로 비교해야 합니다. 원천 시스템의 코드값이 불리언 대신 문자열로 오는 일은 흔하며, 값의 종류(도메인)를 먼저 세어 보는 습관이 필요합니다.</p>
+<div class="language-sql highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1">-- 데모: 컬럼에 어떤 값이 몇 건씩 있는지 세어 보기 (값 도메인 확인)</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="k">SELECT</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span><span class="n">t</span><span class="p">.</span><span class="n">is_fraud</span><span class="p">,</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">    </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">cnt</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="k">FROM</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">    </span><span class="o">`</span><span class="n">finda</span><span class="o">-</span><span class="n">week7</span><span class="o">-</span><span class="mi">505502</span><span class="p">.</span><span class="n">tabformer</span><span class="p">.</span><span class="n">transactions</span><span class="o">`</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">t</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="w">    </span><span class="n">t</span><span class="p">.</span><span class="n">is_fraud</span><span class="p">;</span>
+</span></code></pre></div>
+</li>
+</ul>
+<h3 id="6-이-데이터로-답할-수-있는-비즈니스-질문-지도-8분">6. 이 데이터로 답할 수 있는 비즈니스 질문 지도 (8분)<a class="headerlink" href="#6-이-데이터로-답할-수-있는-비즈니스-질문-지도-8분" title="이 위치로 링크">&para;</a></h3>
+<p>세 테이블을 조합하면 네 방향의 질문에 답할 수 있습니다. 이 지도가 오늘 실습과 Day 3 마트 설계, 그리고 최종 프로젝트 주제의 출발점입니다.</p>
+<pre class="mermaid"><code>flowchart TD
+    ROOT["TabFormer로 답할 수 있는&lt;br/&gt;비즈니스 질문 지도"]
+
+    ROOT --&gt; S["세그먼트&lt;br/&gt;(누가 쓰는가)"]
+    ROOT --&gt; P["소비 패턴&lt;br/&gt;(무엇에 어떻게 쓰는가)"]
+    ROOT --&gt; T["시즌성&lt;br/&gt;(언제 쓰는가)"]
+    ROOT --&gt; F["이상거래&lt;br/&gt;(정상이 아닌 것은)"]
+
+    S --&gt; S1["성별 그리고 연령대별&lt;br/&gt;소비 규모 비교"]
+    S --&gt; S2["소득 구간별&lt;br/&gt;카드 사용 행태"]
+    P --&gt; P1["업종(mcc)별&lt;br/&gt;거래액 순위"]
+    P --&gt; P2["카드 브랜드와 종류별&lt;br/&gt;결제 특성"]
+    T --&gt; T1["월별 거래 추이와&lt;br/&gt;연말 효과"]
+    T --&gt; T2["요일과 시간대별&lt;br/&gt;결제 리듬"]
+    F --&gt; F1["채널(use_chip)별&lt;br/&gt;사기율 비교"]
+    F --&gt; F2["오류(errors) 유형과&lt;br/&gt;사기의 관계"]</code></pre>
+<p>읽는 법: 왼쪽 두 축(세그먼트, 소비 패턴)은 마케팅과 상품 분석의 영역이고, 시즌성은 BI와 지표 관리, 이상거래는 FDS의 영역입니다. Session 2-1에서 본 직무 지형이 그대로 질문 지도가 됩니다. 오늘 실습 4문제는 이 지도에서 하나씩 뽑았습니다.</p>
+<hr />
+<p>쉬는 시간 (10분)</p>
+<hr />
+<h2 id="session-2-3-실습과-리뷰--비즈니스-질문-4개-50분">Session 2-3. 실습과 리뷰 — 비즈니스 질문 4개 (50분)<a class="headerlink" href="#session-2-3-실습과-리뷰--비즈니스-질문-4개-50분" title="이 위치로 링크">&para;</a></h2>
+<h3 id="진행-안내-5분">진행 안내 (5분)<a class="headerlink" href="#진행-안내-5분" title="이 위치로 링크">&para;</a></h3>
+<ul>
+<li>(1) 실습 20분: 아래 4문제를 순서대로 풉니다. 문제마다 힌트가 있으니 막히면 힌트부터 보세요. 4번까지 못 가도 괜찮습니다 (3번까지가 기본 목표, 4번은 도전 문제).</li>
+<li>(2) 짝 리뷰 12분: 옆 사람과 쿼리를 비교합니다 (체크리스트 아래 제공).</li>
+<li>(3) 전체 리뷰 8분: 자주 나오는 실수를 함께 봅니다. 정답 쿼리는 리뷰 시간에 강사 화면으로 공개합니다.</li>
+<li>(4) Day 3 예고 5분.</li>
+</ul>
+<p>공통 규칙:</p>
+<ul>
+<li>테이블은 <code>finda-week7-505502.tabformer.transactions</code> 형태로 참조하고, <code>finda-week7-505502</code>는 본인 프로젝트 ID로 교체합니다.</li>
+<li>금액은 <code>SAFE_CAST(REPLACE(amount, "$", "") AS NUMERIC)</code> 패턴으로 정제해 사용합니다 (Session 2-2 데모 참고).</li>
+<li>쿼리 실행 전 우측 상단의 예상 처리 바이트를 한 번씩 확인하는 습관을 들이세요.</li>
+</ul>
+<h3 id="실습-문제-20분">실습 문제 (20분)<a class="headerlink" href="#실습-문제-20분" title="이 위치로 링크">&para;</a></h3>
+<h4 id="문제-1-우리-고객은-어느-업종에서-돈을-가장-많이-쓰는가">문제 1. 우리 고객은 어느 업종에서 돈을 가장 많이 쓰는가?<a class="headerlink" href="#문제-1-우리-고객은-어느-업종에서-돈을-가장-많이-쓰는가" title="이 위치로 링크">&para;</a></h4>
+<p>카드사 상품기획팀이 새 카드의 주력 혜택 업종을 정하려 합니다. <strong>전체 기간에서 거래액 합계가 가장 큰 업종(mcc) Top 10</strong>을 뽑아 주세요.</p>
+<ul>
+<li>기대 결과 형태: mcc, 거래 건수, 거래액 합계 — 거래액 내림차순 10행</li>
+<li>힌트:<ul>
+<li>(1) 업종 축은 mcc 컬럼 하나로 충분합니다 (GROUP BY 대상).</li>
+<li>(2) 거래액 합계는 정제된 금액에 SUM을 씌웁니다.</li>
+<li>(3) 정렬(ORDER BY)과 LIMIT으로 Top 10을 만듭니다.</li>
+<li>(4) mcc는 숫자 코드라 결과만 보면 업종명을 알 수 없습니다. 결과의 상위 코드 한두 개를 검색해 어떤 업종인지 확인해 보세요 (예: 5411). 코드에 이름을 붙이는 일은 Day 3에서 다룹니다.</li>
+</ul>
+</li>
+</ul>
+<h4 id="문제-2-연말에는-정말-소비가-늘어날까">문제 2. 연말에는 정말 소비가 늘어날까?<a class="headerlink" href="#문제-2-연말에는-정말-소비가-늘어날까" title="이 위치로 링크">&para;</a></h4>
+<p>BI팀이 월간 리포트의 "시즌성" 페이지를 만들려 합니다. <strong>2018년의 월별 거래 건수와 거래액 추이</strong>를 뽑고, 어느 달이 가장 크고 작은지 확인해 주세요.</p>
+<ul>
+<li>기대 결과 형태: month, 거래 건수, 거래액 합계 — 1월부터 12월까지 12행</li>
+<li>힌트:<ul>
+<li>(1) 연도 필터는 WHERE 절에서 year 컬럼으로 겁니다 (날짜 합성 없이도 가능합니다).</li>
+<li>(2) month로 GROUP BY 합니다.</li>
+<li>(3) 결과를 month 순서로 정렬해야 추이로 읽힙니다.</li>
+<li>(4) 다 풀었다면 스스로에게 물어보세요. 12월이 컸다면 그것은 "선물 시즌" 때문일까요? 어떤 업종이 끌어올렸는지 문제 1과 조합하면 확인할 수 있습니다 (선택 심화).</li>
+</ul>
+</li>
+</ul>
+<h4 id="문제-3-성별에-따라-소비-규모가-다른가-join-도전">문제 3. 성별에 따라 소비 규모가 다른가? (JOIN 도전)<a class="headerlink" href="#문제-3-성별에-따라-소비-규모가-다른가-join-도전" title="이 위치로 링크">&para;</a></h4>
+<p>마케팅팀이 성별 타겟 캠페인의 근거 자료를 요청했습니다. <strong>성별로 거래 건수, 평균 결제 금액, 거래액 합계</strong>를 비교해 주세요.</p>
+<ul>
+<li>기대 결과 형태: 성별, 거래 건수, 평균 결제 금액, 거래액 합계 — 성별 수만큼의 행</li>
+<li>힌트:<ul>
+<li>(1) 성별은 users 테이블에 있으므로 transactions와 JOIN이 필요합니다. 조인 키는 <code>t.user_id = u.user_id</code> 하나입니다.</li>
+<li>(2) users의 성별 컬럼 실제 이름은 본인 테이블의 Schema 탭에서 확인하세요 (적재 방식에 따라 대소문자 등이 다를 수 있습니다).</li>
+<li>(3) JOIN 뒤에 GROUP BY는 성별 컬럼으로 합니다. 평균은 AVG, 합계는 SUM입니다.</li>
+<li>(4) 검증 포인트: JOIN 후 전체 거래 건수 합이 약 2,400만에서 크게 벗어나지 않는지 확인하세요. 크게 다르면 조인 키 문제입니다 (Day 1의 user_id 부여를 건너뛰었을 가능성).</li>
+<li>(5) 시간이 남으면 성별 대신 연령대(current_age를 10세 단위 구간으로)로 바꿔 보세요 (CASE WHEN 활용, 선택 심화).</li>
+</ul>
+</li>
+</ul>
+<h4 id="문제-4-온라인-거래는-정말-사기가-더-많을까-도전-문제">문제 4. 온라인 거래는 정말 사기가 더 많을까? (도전 문제)<a class="headerlink" href="#문제-4-온라인-거래는-정말-사기가-더-많을까-도전-문제" title="이 위치로 링크">&para;</a></h4>
+<p>FDS팀 온보딩 첫 과제라고 생각해 봅시다. <strong>결제 채널(use_chip)별 거래 건수, 사기 건수, 사기율(%)</strong>을 구해 어느 채널이 가장 위험한지 확인해 주세요.</p>
+<ul>
+<li>기대 결과 형태: use_chip, 거래 건수, 사기 건수, 사기율 — 사기율 내림차순</li>
+<li>힌트:<ul>
+<li>(1) JOIN이 필요 없습니다. transactions만으로 풉니다.</li>
+<li>(2) 사기 건수는 조건에 맞는 행만 세는 집계가 필요합니다. BigQuery의 <code>COUNTIF(조건)</code> 함수가 편리합니다 (<code>COUNT(*)</code>는 전체, COUNTIF는 조건 충족분만).</li>
+<li>(3) is_fraud는 문자열이므로 조건은 <code>t.is_fraud = "Yes"</code> 형태입니다.</li>
+<li>(4) 사기율은 (사기 건수 / 전체 건수) x 100입니다. 백분율 숫자가 아주 작게 나오는 것이 정상입니다 — 사기는 원래 희귀합니다.</li>
+</ul>
+</li>
+</ul>
+<h3 id="짝-리뷰-12분">짝 리뷰 (12분)<a class="headerlink" href="#짝-리뷰-12분" title="이 위치로 링크">&para;</a></h3>
+<p>옆 사람과 서로의 쿼리를 화면으로 보여주며 아래 체크리스트를 함께 점검합니다. 목적은 정답 맞히기가 아니라 <strong>"같은 질문에 다른 쿼리"를 구경하는 것</strong>입니다.</p>
+<ul>
+<li>(1) 결과 행 수와 최상위 값이 서로 일치하는가? 다르다면 어디서 갈라졌는가? (필터 조건, 정제 방식, 조인 키 순서로 의심)</li>
+<li>(2) 금액 정제를 어디서 했는가? (SELECT에서 매번 반복 또는 다른 방식 — 반복이 번거로웠다면 그 불편함을 기억해 두세요. Day 3에서 해결합니다)</li>
+<li>(3) GROUP BY 축과 SELECT 컬럼이 서로 맞는가? (집계 함수 밖의 컬럼은 모두 GROUP BY에 있어야 합니다)</li>
+<li>(4) 처리 바이트는 서로 비슷한가? SELECT * 를 쓴 쪽이 있다면 얼마나 차이 나는가?</li>
+<li>(5) 마지막으로 서로에게 묻기: "이 결과로 팀장에게 보고한다면 첫 문장은?" — 숫자가 아니라 해석 한 줄을 말해 봅니다.</li>
+</ul>
+<h3 id="자주-나오는-실수-미리보기-8분">자주 나오는 실수 미리보기 (8분)<a class="headerlink" href="#자주-나오는-실수-미리보기-8분" title="이 위치로 링크">&para;</a></h3>
+<p>리뷰하면서 아래 실수가 없었는지 확인합니다. (구체적 정답 쿼리는 강사 화면으로 공개)</p>
+<ul>
+<li>(1) <strong>달러 정제 누락</strong>: amount를 그대로 SUM하면 문자열이라 타입 오류가 나거나, CAST만 쓰면 쿼리가 통째로 실패할 수 있습니다. 오늘의 1순위 실수입니다.</li>
+<li>(2) <strong>is_fraud를 불리언처럼 비교</strong>: <code>is_fraud = TRUE</code>는 동작하지 않습니다. 문자열 "Yes"와 비교해야 합니다.</li>
+<li>(3) <strong>GROUP BY 불일치 오류</strong>: SELECT에 쓴 비집계 컬럼이 GROUP BY에 빠지면 BigQuery가 에러를 냅니다. 에러 메시지를 읽으면 어느 컬럼인지 알려 줍니다.</li>
+<li>(4) <strong>정렬 없는 Top N</strong>: LIMIT만 쓰고 ORDER BY를 빼면 "아무 10행"이 나옵니다. Top 10은 반드시 정렬과 함께입니다.</li>
+<li>(5) <strong>조인 후 건수 검증 생략</strong>: JOIN이 성공적으로 실행됐다는 것과 올바르게 조인됐다는 것은 다릅니다. 조인 전후 행 수 비교는 실무의 기본 검증 절차입니다.</li>
+<li>(6) <strong>SELECT * 습관</strong>: 결과는 같아도 처리 바이트가 커집니다. 필요한 컬럼만 부르는 습관이 비용 감각의 시작입니다.</li>
+</ul>
+<h3 id="day-3-예고-5분">Day 3 예고 (5분)<a class="headerlink" href="#day-3-예고-5분" title="이 위치로 링크">&para;</a></h3>
+<p>오늘 4문제를 풀면서 전원이 같은 코드를 반복했습니다. <code>SAFE_CAST(REPLACE(...))</code> 정제, 날짜 합성, 조인 경로. 매번 다시 쓰는 대신, <strong>미리 정제되고 조인된 분석 전용 테이블을 한 번 만들어 두면</strong> 어떨까요? 그것이 내일 배울 <strong>데이터 마트</strong>입니다. 오늘 짝 리뷰에서 느낀 "반복의 불편함"이 내일 수업의 출발점입니다. 자세한 내용은 <a href="day3-lecture.html">Day 3 강의안</a>에서 다룹니다.</p>
+<hr />
+<p>오늘의 핵심 교훈 한 줄: <strong>"쿼리는 다섯 단계 업무의 한 조각이다 — 데이터를 알고, 질문을 번역하고, 숫자를 해석까지 해야 분석이 끝난다."</strong></p>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  맨위로
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="하단/푸터" >
+        
+          
+          <a href="day1-lecture.html" class="md-footer__link md-footer__link--prev" aria-label="이전: Day 1 — BigQuery 입문, 데이터 적재, 기초 쿼리">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                이전
+              </span>
+              <div class="md-ellipsis">
+                Day 1 — BigQuery 입문, 데이터 적재, 기초 쿼리
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="day3-lecture.html" class="md-footer__link md-footer__link--next" aria-label="다음: Day 3 — 데이터 마트 설계와 구축">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                다음
+              </span>
+              <div class="md-ellipsis">
+                Day 3 — 데이터 마트 설계와 구축
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2026 Eunjung Cho
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/Eunjung-Cho" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.sections", "navigation.expand", "navigation.top", "navigation.footer", "navigation.tracking", "toc.follow", "search.highlight", "search.suggest", "content.code.copy", "content.action.edit"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\ud074\ub9bd\ubcf4\ub4dc\uc5d0 \ubcf5\uc0ac\ub428", "clipboard.copy": "\ud074\ub9bd\ubcf4\ub4dc\ub85c \ubcf5\uc0ac", "search.result.more.one": "\uc774 \ubb38\uc11c\uc5d0\uc11c 1\uac1c\uc758 \uac80\uc0c9 \uacb0\uacfc \ub354 \ubcf4\uae30", "search.result.more.other": "\uc774 \ubb38\uc11c\uc5d0\uc11c #\uac1c\uc758 \uac80\uc0c9 \uacb0\uacfc \ub354 \ubcf4\uae30", "search.result.none": "\uac80\uc0c9\uc5b4\uc640 \uc77c\uce58\ud558\ub294 \ubb38\uc11c\uac00 \uc5c6\uc2b5\ub2c8\ub2e4", "search.result.one": "1\uac1c\uc758 \uc77c\uce58\ud558\ub294 \ubb38\uc11c", "search.result.other": "#\uac1c\uc758 \uc77c\uce58\ud558\ub294 \ubb38\uc11c", "search.result.placeholder": "\uac80\uc0c9\uc5b4\ub97c \uc785\ub825\ud558\uc138\uc694", "search.result.term.missing": "\ud3ec\ud568\ub418\uc9c0 \uc54a\uc740 \uac80\uc0c9\uc5b4", "select.version": "\ubc84\uc804 \uc120\ud0dd"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>
