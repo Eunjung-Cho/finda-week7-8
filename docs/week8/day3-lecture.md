@@ -646,23 +646,54 @@ Looker Studio(현재 서비스명은 **데이터 스튜디오**로 변경)는 �
 
 #### (1) 대시보드용 뷰 만들기 (3분)
 
-`fs_long`은 long format이라 차트로 바로 그리기 불편합니다. **2-3의 피벗 쿼리를 뷰로 저장**해서 붙이면 훨씬 쉽습니다.
+`fs_long`은 long format이라 차트로 바로 그리기 불편합니다. **2-3의 피벗 쿼리를 뷰로 저장**해서 붙입니다. 단, 피벗을 그대로 뷰로 만들면 함정이 하나 있습니다 — 2-3에서 배운 **계정명 표기 흔들림**입니다. 실제로 삼성전자는 손익계산서 매출이 `매출액`이 아니라 `수익(매출액)`으로 와서, 보정 없이 만들면 `revenue`가 통째로 NULL이 됩니다.
+
+먼저 내 데이터의 실제 표기를 확인하고:
+
+```sql
+SELECT DISTINCT f.corp_name, f.sj_div, f.account_nm
+FROM `본인프로젝트.dart.fs_long` AS f
+WHERE f.account_nm LIKE '%매출%'
+   OR f.account_nm LIKE '%영업이익%'
+   OR f.account_nm LIKE '%당기순이익%'
+   OR f.account_nm LIKE '%현금흐름%'
+ORDER BY f.corp_name, f.sj_div, f.account_nm
+```
+
+확인한 표기를 IN 목록에 반영해 뷰를 만듭니다 (아래는 대표적인 변형을 미리 담은 버전 — 본인 기업의 표기가 다르면 목록에 추가하세요):
 
 ```sql
 CREATE OR REPLACE VIEW `본인프로젝트.dart.v_fs_wide` AS
 SELECT
     f.corp_name,
     f.bsns_year,
+    -- 재무상태표 (BS)
     MAX(CASE WHEN f.account_nm = '자산총계' THEN f.amount_krw END) AS assets,
     MAX(CASE WHEN f.account_nm = '부채총계' THEN f.amount_krw END) AS liabilities,
     MAX(CASE WHEN f.account_nm = '자본총계' THEN f.amount_krw END) AS equity,
-    MAX(CASE WHEN f.account_nm = '매출액' THEN f.amount_krw END) AS revenue,
-    MAX(CASE WHEN f.account_nm = '영업이익' THEN f.amount_krw END) AS op_income,
-    MAX(CASE WHEN f.account_nm = '당기순이익' THEN f.amount_krw END) AS net_income
+    -- 손익계산서 (IS) — 표기 변형을 IN으로 흡수
+    MAX(CASE WHEN f.account_nm IN ('매출액', '수익(매출액)', '영업수익')
+             THEN f.amount_krw END) AS revenue,
+    MAX(CASE WHEN f.account_nm IN ('영업이익', '영업이익(손실)')
+             THEN f.amount_krw END) AS op_income,
+    MAX(CASE WHEN f.account_nm IN ('당기순이익', '당기순이익(손실)', '연결당기순이익')
+             THEN f.amount_krw END) AS net_income,
+    -- 현금흐름표 (CF) — 대시보드 차트 ⑥에서 사용
+    MAX(CASE WHEN f.account_nm LIKE '영업활동%현금흐름'
+             THEN f.amount_krw END) AS operating_cf
 FROM `본인프로젝트.dart.fs_long` AS f
-WHERE f.fs_div = 'CFS' AND f.sj_div IN ('BS', 'IS')
+WHERE f.fs_div = 'CFS' AND f.sj_div IN ('BS', 'IS', 'CF')
 GROUP BY f.corp_name, f.bsns_year
 ```
+
+만들고 나면 반드시 확인:
+
+```sql
+SELECT * FROM `본인프로젝트.dart.v_fs_wide`
+ORDER BY corp_name, bsns_year
+```
+
+**기업 2곳 × 5개년 = 10행이 나오고 NULL이 없어야** 대시보드를 그릴 준비가 된 것입니다. 행이 1~2개뿐이면 뷰 문제가 아니라 `fs_long`에 데이터가 덜 쌓인 것 — 1교시 수집 루프부터 다시 확인하세요.
 
 **뷰는 저장 비용이 0원**입니다 — 쿼리 텍스트만 저장되고, 조회할 때마다 원본을 읽습니다. 7주차에 만든 `v_transactions_clean`과 같은 원리입니다.
 
@@ -688,24 +719,67 @@ https://lookerstudio.google.com 에 접속합니다. 상단에 "Looker Studio가
 
 필드 목록이 뜨면 우측 상단 **보고서 만들기**를 눌러 보고서에 추가합니다 — 표가 하나 생기면 연결 성공입니다.
 
-#### (3) 차트 네 개로 3개년 비교 (11분)
+#### (3) 청사진 — 무엇을 그릴 것인가 (2분)
 
-삼성전자와 SK하이닉스를 나란히 놓습니다. 각 차트에서 **기간 측정기준은 `bsns_year`, 색상 분류는 `corp_name`**으로 두는 게 공통 패턴입니다.
+실무에서 쓰는 재무 대시보드(예: "재무선배"류 상용 대시보드)는 차트가 수십 개지만, 뼈대는 2-1에서 배운 읽는 순서 그대로입니다. 우리는 그 뼈대만 살려 **스코어카드 3개 + 차트 6개**로 만듭니다.
 
-| # | 차트 | 설정 | 답하는 질문 |
+```
+[기업 드롭다운]  [기간 컨트롤]
+┌ 헤더: 스코어카드 3개 — 최신연도 매출 · 영업이익률 · 부채비율
+├ 손익(I/S):   ① 매출액 5개년 막대      ② 영업이익 5개년 막대
+│              ③ 영업이익률 추이 선
+├ 재무상태(B/S): ④ 부채+자본 누적 막대    ⑤ 부채비율 추이 선
+└ 현금흐름(C/F): ⑥ 영업이익 vs 영업활동현금흐름 콤보
+```
+
+위에서 아래로 "얼마나 팔았나 → 얼마나 벌었나 → 튼튼한가 → 현금이 들어오나" — **좋은 대시보드는 예쁜 화면이 아니라 질문의 순서**입니다.
+
+#### (4) 차트 만들기 (9분)
+
+공통 패턴은 하나입니다: **측정기준(기간) `bsns_year` · 분류(색상) `corp_name` · 측정항목은 뷰의 컬럼**. 첫 차트만 자세히 하고, 나머지는 같은 동작의 반복입니다.
+
+**헤더 — 스코어카드 3개.** 삽입 → 스코어카드. 측정항목 `revenue`. 기본값은 전체 기간 합계라 5개년이 합쳐지므로, 차트의 **기간 설정을 최신 연도로 고정**합니다. 같은 방법으로 영업이익률·부채비율 스코어카드를 추가합니다 (계산된 필드는 아래에서).
+
+> 📷 스크린샷 추가 예정: (스코어카드 측정항목·기간 설정 패널)
+
+**차트 ① — 매출액 5개년 막대.** 삽입 → 세로 막대 차트 → 캔버스에 놓고 우측 패널에서:
+
+- (1) 측정기준: `bsns_year`
+- (2) 분류 측정기준: `corp_name` ← 이게 삼성전자·하이닉스를 색으로 가르는 설정
+- (3) 측정항목: `revenue`
+- (4) 정렬: `bsns_year` 오름차순
+
+> 📷 스크린샷 추가 예정: (차트 ① 설정 패널 — 측정기준/분류/측정항목)
+
+**계산된 필드 — 이 실습의 핵심.** 차트 ③을 만들 때 측정항목 자리에서 **필드 추가 → 계산된 필드**:
+
+```
+이름: 영업이익률
+수식: SUM(op_income) / SUM(revenue)
+유형: 숫자 → 퍼센트
+```
+
+SQL에서 하던 SAFE_DIVIDE를 UI에서 하는 것뿐입니다. 부채비율(`SUM(liabilities) / SUM(equity)`)도 같은 방법입니다.
+
+> 📷 스크린샷 추가 예정: (계산된 필드 입력 화면)
+
+**나머지 차트는 패턴 반복** — 표를 보고 직접 만드세요:
+
+| # | 차트 유형 | 측정항목 | 비고 |
 | --- | --- | --- | --- |
-| 1 | 스코어카드 3개 | 최신 연도 `revenue`, `op_income`, 부채비율 | 지금 규모는? |
-| 2 | 세로 막대 | 측정기준 `bsns_year`, 분류 `corp_name`, 측정항목 `revenue` | 매출이 크는가 |
-| 3 | 시계열(선) | 측정항목 = 계산된 필드 `op_income / revenue` | 수익성이 개선되는가 |
-| 4 | 세로 막대 | 측정항목 = 계산된 필드 `liabilities / equity` | 재무가 안정적인가 |
+| ② | 세로 막대 | `op_income` | ①과 동일 설정, 측정항목만 교체 |
+| ③ | 시계열(선) | 계산된 필드 영업이익률 | 개선 추세가 보이는가 |
+| ④ | 누적 세로 막대 | `liabilities`, `equity` 두 개 | 쌓으면 자산 — 자산 = 부채 + 자본을 눈으로 |
+| ⑤ | 시계열(선) | 계산된 필드 부채비율 | 하락 중이면 개선 |
+| ⑥ | 콤보(막대+선) | `op_income`(막대), `operating_cf`(선) | 2-1의 "이익 ≠ 현금"을 차트로 목격 |
 
-계산된 필드 만드는 법: 차트의 측정항목에서 **필드 추가 → 계산된 필드** → 수식에 `SUM(op_income) / SUM(revenue)`를 넣고 형식을 백분율로. **SQL에서 하던 SAFE_DIVIDE를 UI에서 하는 것**뿐입니다.
+**컨트롤 얹기.** 삽입 → 드롭다운 목록(제어 필드 `corp_name`)과 기간 컨트롤을 상단에 배치 — 보는 사람이 직접 기업을 바꿔 볼 수 있는 대시보드가 됩니다.
 
-마지막으로 **기간 컨트롤과 `corp_name` 드롭다운 필터**를 상단에 올리면, 보는 사람이 직접 기업을 바꿔 볼 수 있는 대시보드가 완성됩니다.
+> 📷 스크린샷 추가 예정: (완성 대시보드 전체 화면)
 
-> **오늘 배운 순서 그대로가 대시보드입니다.** 차트 2는 "얼마나 팔았나", 차트 3은 "그래서 얼마나 벌었나", 차트 4는 "재무적으로 튼튼한가" — 2-1에서 익힌 읽는 순서를 화면에 옮긴 것뿐입니다. **좋은 대시보드는 예쁜 화면이 아니라 질문의 순서**입니다.
+차트 ⑥에서 두 선이 벌어지는 해가 보이면 그게 바로 2-1에서 말한 "이익은 느는데 현금이 안 들어오는" 시점입니다 — 매출채권과 재고를 확인할 이유가 생긴 것이고, **대시보드는 답이 아니라 다음 질문을 만드는 도구**라는 것을 여기서 체감합니다.
 
-미션: 두 기업 중 **"최근 3년간 더 좋아지고 있는 쪽"**을 대시보드 한 장으로 설명해 보세요. 옆 사람에게 30초 안에 설명이 되면 성공입니다.
+미션: 두 기업 중 **"최근 5년간 더 좋아지고 있는 쪽"**을 대시보드 한 장으로 설명해 보세요. 옆 사람에게 30초 안에 설명이 되면 성공입니다.
 
 ### 3-3. 8주차 회고와 다음 주 예고 (13분)
 
