@@ -1,0 +1,30 @@
+name: DART to BigQuery batch
+
+on:
+  schedule:
+    # 매주 월요일 한국시간 08:00 (cron은 UTC 기준이라 일요일 23:00)
+    - cron: "0 23 * * 0"
+  workflow_dispatch:        # Actions 탭에서 수동 실행용
+
+concurrency:
+  group: dart-batch
+  cancel-in-progress: false
+
+jobs:
+  load:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r pipeline/requirements.txt
+      - run: python pipeline/load_dart.py
+        env:
+          DART_API_KEY: ${{ secrets.DART_API_KEY }}
+          GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
+          GCP_PROJECT: finda-week7
+          BQ_DATASET: dart
+          BQ_TABLE: fs_long
+          BQ_LOCATION: asia-northeast3

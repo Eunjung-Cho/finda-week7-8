@@ -34,12 +34,12 @@ flowchart LR
 |---|---|---|
 | Day 1 (금) | 서브쿼리와 CTE, 윈도우 함수 심화, 재귀 CTE, RFM 고객 등급화 | [강의안](week8/day1-lecture.md) · [사전 워크시트](week8/day1-worksheet.md) |
 | Day 2 (토) | 시계열 분석(볼린저 밴드), 리스크 분석(FICO·DTI·집중도), 사기 탐지(FDS) | [강의안](week8/day2-lecture.md) |
-| Day 3 (일) | OpenDART 수집 → BigQuery 배치 적재 → SQL 재무분석 | [강의안](week8/day3-lecture.md) · [사전 준비 가이드](week8/day3-prep-guide.md) |
+| Day 3 (일) | OpenDART 수집 → BigQuery 배치 적재 → SQL 재무분석 | [강의안](week8/day3-lecture.md) |
 
 ### 8주차 시작 전 준비물
 
 - **Day 1 전까지**: [윈도우 프레임 손풀기 워크시트](week8/day1-worksheet.md)를 풀어 오세요 (30분, 과금 0원).
-- **Day 3 전까지**: [OpenDART API 키 발급과 GCP 프로젝트 점검](week8/day3-prep-guide.md)을 마쳐 오세요 (10분). 이걸 안 하면 Day 3 실습을 구경만 하게 됩니다.
+- **Day 3 전까지**: [OpenDART API 키 발급과 GCP 프로젝트 점검](week8/day3-lecture.md#prep)을 마쳐 오세요 (10분). 이걸 안 하면 Day 3 실습을 구경만 하게 됩니다.
 
 ## 수업 진행 방식
 
