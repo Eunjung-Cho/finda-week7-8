@@ -125,6 +125,10 @@ https://opendart.fss.or.kr/api/company.json?crtfc_key=본인키&corp_code=001263
 
 `"status":"000"`과 함께 삼성전자 정보가 보이면 성공입니다. `"010"` 또는 `"011"`이면 키가 아직 활성화되지 않은 것 — 몇 분 뒤 다시 시도하세요.
 
+발급된 키와 일별 호출량은 **마이페이지 → 오픈API 이용현황**에서 언제든 확인할 수 있습니다.
+
+![스크린샷](../assets/images/dart-api-usage-example.png)
+
 키는 **비밀번호처럼** 다룹니다. 노트북(Colab)을 공유할 때 키가 박힌 채로 공유하지 않기 — 1-7에서 안전한 보관 패턴을 씁니다.
 
 **준비 2. GCP 프로젝트 점검 (3분)**
@@ -638,7 +642,7 @@ jobs:
 
 쌓았고, 읽었습니다. 마지막은 **남에게 보여주는 일**입니다. 분석 결과가 여러분 노트북 안에만 있으면 조직에서는 없는 것과 같습니다.
 
-Looker Studio(구 데이터 스튜디오)는 무료이고 BigQuery에 바로 붙습니다.
+Looker Studio(현재 서비스명은 **데이터 스튜디오**로 변경)는 무료이고 BigQuery에 바로 붙습니다.
 
 #### (1) 대시보드용 뷰 만들기 (3분)
 
@@ -662,11 +666,27 @@ GROUP BY f.corp_name, f.bsns_year
 
 **뷰는 저장 비용이 0원**입니다 — 쿼리 텍스트만 저장되고, 조회할 때마다 원본을 읽습니다. 7주차에 만든 `v_transactions_clean`과 같은 원리입니다.
 
-#### (2) Looker Studio 연결 (4분)
+#### (2) 데이터 스튜디오에서 BigQuery 연결 (4분)
 
-- (1) https://lookerstudio.google.com 접속 → **빈 보고서 만들기**
-- (2) 데이터 소스에서 **BigQuery** 선택 → 본인 프로젝트 → `dart` → `v_fs_wide`
-- (3) **추가** → 보고서에 표가 하나 생기면 연결 성공
+https://lookerstudio.google.com 에 접속합니다. 상단에 "Looker Studio가 **데이터 스튜디오**로 변경되었습니다"라는 안내가 뜨죠 — 이름만 바뀌었고 화면과 기능은 같습니다. 자료나 검색에서 두 이름이 섞여 나오니 같은 도구라고 알아 두세요.
+
+홈 화면에서 좌측 상단 **만들기 → 데이터 소스**를 누릅니다.
+
+![스크린샷](../assets/images/datastudio-home-example.png)
+
+커넥터 목록이 나옵니다. Google Connectors에서 **BigQuery**를 선택하세요.
+
+![스크린샷](../assets/images/datastudio-connectors-example.png)
+
+커넥터를 처음 쓰면 권한 **승인** 화면이 나옵니다 — 본인 구글 계정으로 승인하면 됩니다 (한 번만).
+
+![스크린샷](../assets/images/datastudio-authorize-example.png)
+
+승인 후 프로젝트 탐색기에서 **본인 프로젝트 → `dart` → `v_fs_wide`**를 차례로 선택하고 우측 상단 **연결**을 누릅니다.
+
+![스크린샷](../assets/images/datastudio-bigquery-connect-example.png)
+
+필드 목록이 뜨면 우측 상단 **보고서 만들기**를 눌러 보고서에 추가합니다 — 표가 하나 생기면 연결 성공입니다.
 
 #### (3) 차트 네 개로 3개년 비교 (11분)
 
